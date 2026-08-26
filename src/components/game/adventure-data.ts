@@ -135,7 +135,7 @@ export const destinations: Destination[] = [
     emoji: "🤝",
     x: 28,
     y: 60,
-    unlockAfter: 1,
+    unlockAfter: 0,
     tint: "sunbeam",
     intro: "The community is getting together.",
     prompt: "Set up the event",
@@ -162,7 +162,7 @@ export const destinations: Destination[] = [
     emoji: "💻",
     x: 62,
     y: 62,
-    unlockAfter: 1,
+    unlockAfter: 0,
     tint: "lilac",
     intro: "Someone needs a little help online.",
     prompt: "Tidy up the shared drive",
@@ -189,7 +189,7 @@ export const destinations: Destination[] = [
     emoji: "🎨",
     x: 86,
     y: 52,
-    unlockAfter: 2,
+    unlockAfter: 0,
     tint: "coral",
     intro: "A blank wall is waiting for some colour.",
     prompt: "Decorate the community wall",
@@ -215,7 +215,7 @@ export const destinations: Destination[] = [
     emoji: "✨",
     x: 48,
     y: 86,
-    unlockAfter: 3,
+    unlockAfter: 0,
     bonus: true,
     tint: "primary",
     intro: "A hidden garden, discovered by explorers only.",
@@ -406,4 +406,4 @@ export const tintClass: Record<Destination["tint"], string> = {
 };
 
 /** Minimum destinations before the results screen becomes available. */
-export const MIN_DESTINATIONS = 4;
+export const MIN_DESTINATIONS = 1;

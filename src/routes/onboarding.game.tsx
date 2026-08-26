@@ -419,11 +419,9 @@ function AdventureOnboarding() {
                   Keep exploring
                   <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
                 </Button>
-                {enoughExplored ? (
-                  <Button variant="outline" size="lg" onClick={() => setStage(sessionType === "deeper" ? "results" : "decision")}>
-                    {sessionType === "deeper" ? "Update results" : "Finish adventure"}
-                  </Button>
-                ) : null}
+                <Button variant="outline" size="lg" onClick={() => setStage("matches")}>
+                  Result
+                </Button>
               </div>
             </div>
           </section>

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { LayoutGrid, List, SearchX, SlidersHorizontal } from "lucide-react";
-import { useMemo, useState } from "react";
+import { LayoutGrid, List, SearchX, SlidersHorizontal, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { OpportunityGrid, OpportunityList } from "@/components/shared/OpportunityCard";
@@ -19,6 +19,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { activeOpportunities, allCauses, allLocations } from "@/data/opportunities";
+import { loadAdventureSessionAsync, type AdventureSession } from "@/lib/adventure-progress";
 
 export const Route = createFileRoute("/browse")({
   validateSearch: (search: Record<string, unknown>): { cause?: string; q?: string } => ({
@@ -44,6 +45,7 @@ export const Route = createFileRoute("/browse")({
 });
 
 const ALL = "all";
+const RECOMMENDATIONS = "recommendations";
 
 function BrowsePage() {
   const { cause: causeParam, q: qParam } = Route.useSearch();
@@ -55,11 +57,37 @@ function BrowsePage() {
   const [remoteOnly, setRemoteOnly] = useState(false);
   const [sort, setSort] = useState("match");
   const [layout, setLayout] = useState<"grid" | "list">("grid");
+  const [adventureSession, setAdventureSession] = useState<AdventureSession | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    loadAdventureSessionAsync().then((sess) => {
+      if (isMounted) setAdventureSession(sess);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
+    const userCauses = adventureSession?.discoveredInterests ?? [];
+    const userSkills = adventureSession?.discoveredSkills ?? [];
+
     let list = activeOpportunities.filter((o) => {
-      if (cause !== ALL && o.cause !== cause) return false;
+      if (cause === RECOMMENDATIONS) {
+        if (userCauses.length > 0 || userSkills.length > 0) {
+          const matchCause = userCauses.includes(o.cause);
+          const matchSkill = o.skills.some((s) =>
+            userSkills.some((us) => s.toLowerCase().includes(us.toLowerCase()) || us.toLowerCase().includes(s.toLowerCase())),
+          );
+          if (!matchCause && !matchSkill) return false;
+        } else {
+          if (o.matchScore < 75) return false;
+        }
+      } else if (cause !== ALL && o.cause !== cause) {
+        return false;
+      }
       if (location !== ALL && o.location !== location) return false;
       if (remoteOnly && !o.remote) return false;
       if (!q) return true;
@@ -77,7 +105,7 @@ function BrowsePage() {
           : b.matchScore - a.matchScore,
     );
     return list;
-  }, [query, cause, location, remoteOnly, sort]);
+  }, [query, cause, location, remoteOnly, sort, adventureSession]);
 
   const clearAll = () => {
     setQuery("");
@@ -100,6 +128,12 @@ function BrowsePage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={ALL}>All causes</SelectItem>
+            <SelectItem value={RECOMMENDATIONS}>
+              <span className="flex items-center gap-1 font-medium text-primary">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                Your Recommendations
+              </span>
+            </SelectItem>
             {allCauses.map((c) => (
               <SelectItem key={c} value={c}>
                 {c}
