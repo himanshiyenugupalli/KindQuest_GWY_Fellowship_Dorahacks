@@ -1,0 +1,2 @@
+/* redirect SPA routes to index.html for Netlify */
+/*    /index.html   200
