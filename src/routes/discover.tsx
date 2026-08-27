@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Compass, Gamepad2, MapPin, Sparkles, TrendingUp, Wifi } from "lucide-react";
 
 import { AppShell } from "@/components/layout/AppShell";
+import { useAuth } from "@/lib/auth";
 import { MatchReasons } from "@/components/shared/MatchBadge";
 import {
   OpportunityGrid,
@@ -34,23 +35,28 @@ export const Route = createFileRoute("/discover")({
 });
 
 function DiscoverPage() {
+  const { profile, volunteerProfile } = useAuth();
+
+  const name = profile?.full_name || demoVolunteer.name;
+  const firstName = name.split(" ")[0];
+  const location = profile?.location || demoVolunteer.location;
+  const impactPoints = volunteerProfile?.impact_points ?? demoVolunteer.impactPoints;
+  const causes = volunteerProfile?.causes?.length ? volunteerProfile.causes : demoVolunteer.causes;
+
   const recommended = [...activeOpportunities]
     .sort((a, b) => b.matchScore - a.matchScore)
     .slice(0, 6);
   const nearby = activeOpportunities.filter((o) => !o.remote).slice(0, 6);
   const remote = activeOpportunities.filter((o) => o.remote).slice(0, 6);
-  const rank = rankFor(demoVolunteer.impactPoints);
-  const next = nextRankFor(demoVolunteer.impactPoints);
+  const rank = rankFor(impactPoints);
+  const next = nextRankFor(impactPoints);
   const progress = next
-    ? ((demoVolunteer.impactPoints - rank.minPoints) / (next.minPoints - rank.minPoints)) * 100
+    ? ((impactPoints - rank.minPoints) / (next.minPoints - rank.minPoints)) * 100
     : 100;
   const top = recommended[0];
 
   return (
-    <AppShell
-      title={`Welcome back, ${demoVolunteer.name.split(" ")[0]}`}
-      subtitle="Here's what fits you right now."
-    >
+    <AppShell title={`Welcome back, ${firstName}`} subtitle="Here's what fits you right now.">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="min-w-0 space-y-10">
           {top ? (
@@ -89,7 +95,7 @@ function DiscoverPage() {
           <section>
             <SectionHeader
               title="Near you"
-              description={`In-person opportunities around ${demoVolunteer.location}.`}
+              description={`In-person opportunities around ${location}.`}
             />
             <OpportunityRail items={nearby} />
           </section>
@@ -106,14 +112,12 @@ function DiscoverPage() {
               <TrendingUp className="h-4 w-4 text-primary" aria-hidden="true" />
               Your progress
             </p>
-            <p className="mt-4 text-3xl font-bold">{demoVolunteer.impactPoints.toLocaleString()}</p>
+            <p className="mt-4 text-3xl font-bold">{impactPoints.toLocaleString()}</p>
             <p className="text-sm text-muted-foreground">Impact Points</p>
             <Progress value={progress} className="mt-4" aria-label="Progress to next rank" />
             <p className="mt-2 text-sm text-muted-foreground">
               {rank.name}
-              {next
-                ? ` · ${next.minPoints - demoVolunteer.impactPoints} pts to ${next.name}`
-                : " · top rank"}
+              {next ? ` · ${next.minPoints - impactPoints} pts to ${next.name}` : " · top rank"}
             </p>
             <Button asChild variant="outline" size="sm" className="mt-4 w-full">
               <Link to="/volunteer-id">View Volunteer ID</Link>
@@ -156,7 +160,7 @@ function DiscoverPage() {
           <div className="card-surface rounded-2xl p-5">
             <p className="text-sm font-semibold">Your causes</p>
             <div className="mt-3 flex flex-wrap gap-2">
-              {demoVolunteer.causes.map((c) => (
+              {causes.map((c) => (
                 <Badge key={c} variant="secondary">
                   {c}
                 </Badge>

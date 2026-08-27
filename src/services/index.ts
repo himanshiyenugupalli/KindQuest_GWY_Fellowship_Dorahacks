@@ -32,66 +32,60 @@ const delay = <T>(value: T, ms = 200): Promise<T> =>
 
 export const opportunityService = {
   list: async () => {
-    try {
-      const { data, error } = await supabase
-        .from("opportunities")
-        .select("*")
-        .eq("status", "active");
-      if (!error && data && data.length > 0) {
-        return data.map((o: any) => ({
-          ...o,
-          organizationId: o.organization_id,
-          organizationName: o.organization_name,
-          spotsLeft: o.spots_left,
-          spotsTotal: o.spots_total,
-          impactPoints: o.impact_points,
-          matchScore: 85,
-        }));
-      }
-    } catch (e) {
-      console.warn("Supabase fetch failed, fallback to mock opportunities");
+    const { data, error } = await supabase.from("opportunities").select("*").eq("status", "active");
+    if (error) {
+      console.error("Error fetching active opportunities:", error);
+      throw error;
     }
-    return delay(activeOpportunities);
+    if (data && data.length > 0) {
+      return data.map((o: any) => ({
+        ...o,
+        organizationId: o.organization_id,
+        organizationName: o.organization_name,
+        spotsLeft: o.spots_left,
+        spotsTotal: o.spots_total,
+        impactPoints: o.impact_points,
+        matchScore: 85,
+      }));
+    }
+    return activeOpportunities;
   },
   listAll: async () => {
-    try {
-      const { data, error } = await supabase.from("opportunities").select("*");
-      if (!error && data && data.length > 0) {
-        return data.map((o: any) => ({
-          ...o,
-          organizationId: o.organization_id,
-          organizationName: o.organization_name,
-          spotsLeft: o.spots_left,
-          spotsTotal: o.spots_total,
-          impactPoints: o.impact_points,
-          matchScore: 85,
-        }));
-      }
-    } catch (e) {
-      console.warn("Supabase fetch failed");
+    const { data, error } = await supabase.from("opportunities").select("*");
+    if (error) {
+      console.error("Error fetching all opportunities:", error);
+      throw error;
     }
-    return delay(opportunities);
+    if (data && data.length > 0) {
+      return data.map((o: any) => ({
+        ...o,
+        organizationId: o.organization_id,
+        organizationName: o.organization_name,
+        spotsLeft: o.spots_left,
+        spotsTotal: o.spots_total,
+        impactPoints: o.impact_points,
+        matchScore: 85,
+      }));
+    }
+    return opportunities;
   },
   get: async (id: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("opportunities")
-        .select("*")
-        .eq("id", id)
-        .single();
-      if (!error && data) {
-        return {
-          ...data,
-          organizationId: data.organization_id,
-          organizationName: data.organization_name,
-          spotsLeft: data.spots_left,
-          spotsTotal: data.spots_total,
-          impactPoints: data.impact_points,
-          matchScore: 90,
-        };
-      }
-    } catch (e) {}
-    return delay(opportunityById(id));
+    const { data, error } = await supabase.from("opportunities").select("*").eq("id", id).single();
+    if (error) {
+      console.error(`Error fetching opportunity ${id}:`, error);
+      const staticMatch = opportunityById(id);
+      if (staticMatch) return staticMatch;
+      throw error;
+    }
+    return {
+      ...data,
+      organizationId: data.organization_id,
+      organizationName: data.organization_name,
+      spotsLeft: data.spots_left,
+      spotsTotal: data.spots_total,
+      impactPoints: data.impact_points,
+      matchScore: 90,
+    };
   },
   recommended: async (limit = 6) => {
     const list = await opportunityService.list();
@@ -110,250 +104,270 @@ export const opportunityService = {
     return list.filter((o) => o.cause === cause);
   },
   saved: async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data, error } = await supabase
-          .from("saved_opportunities")
-          .select("opportunity_id")
-          .eq("user_id", session.user.id);
-        if (!error && data && data.length > 0) {
-          const ids = data.map((d: any) => d.opportunity_id);
-          const all = await opportunityService.listAll();
-          return all.filter((o) => ids.includes(o.id));
-        }
-      }
-    } catch (e) {}
-    return delay(activeOpportunities.filter((o) => savedOpportunityIds.includes(o.id)));
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.user) return [];
+    const { data, error } = await supabase
+      .from("saved_opportunities")
+      .select("opportunity_id")
+      .eq("user_id", session.user.id);
+    if (error) {
+      console.error("Error fetching saved opportunities:", error);
+      throw error;
+    }
+    const ids = data ? data.map((d: any) => d.opportunity_id) : [];
+    const all = await opportunityService.listAll();
+    return all.filter((o) => ids.includes(o.id));
   },
 };
 
 export const volunteerService = {
   profile: async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data: prof } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-        const { data: vProf } = await supabase
-          .from("volunteer_profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.user) return null;
+    const { data: prof, error: profErr } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", session.user.id)
+      .single();
 
-        if (prof && vProf) {
-          return {
-            id: prof.id,
-            volunteerId: vProf.volunteer_id,
-            name: prof.full_name,
-            email: prof.email,
-            bio: vProf.bio || "",
-            location: prof.location || "Hyderabad, India",
-            avatarInitials: prof.full_name.slice(0, 2).toUpperCase(),
-            causes: vProf.causes || [],
-            skills: vProf.skills || [],
-            availability: vProf.availability || [],
-            preferredType: (vProf.preferred_type || "Both") as "In-person" | "Remote" | "Both",
-            impactPoints: vProf.impact_points || 0,
-            rankId: vProf.rank_id || "r1",
-            reliability: vProf.reliability || {
-              score: 100,
-              effort: 100,
-              reliability: 100,
-              conduct: 100,
-            },
-            contributions: vProf.contributions || 0,
-            badgeIds: vProf.badge_ids || [],
-            joinedOn: vProf.joined_on || "Aug 2026",
-          };
-        }
-      }
-    } catch (e) {}
-    return delay(demoVolunteer);
+    if (profErr) {
+      console.error("Error fetching profile:", profErr);
+      throw profErr;
+    }
+
+    const { data: vProf } = await supabase
+      .from("volunteer_profiles")
+      .select("*")
+      .eq("id", session.user.id)
+      .single();
+
+    return {
+      id: prof.id,
+      volunteerId: vProf?.volunteer_id || "KQ-00000",
+      name: prof.full_name,
+      email: prof.email,
+      bio: vProf?.bio || "",
+      location: prof.location || "Hyderabad, India",
+      avatarInitials: prof.full_name.slice(0, 2).toUpperCase(),
+      causes: vProf?.causes || [],
+      skills: vProf?.skills || [],
+      availability: vProf?.availability || [],
+      preferredType: (vProf?.preferred_type || "Both") as "In-person" | "Remote" | "Both",
+      impactPoints: vProf?.impact_points || 0,
+      rankId: vProf?.rank_id || "r1",
+      reliability: vProf?.reliability || {
+        score: 100,
+        effort: 100,
+        reliability: 100,
+        conduct: 100,
+      },
+      contributions: vProf?.contributions || 0,
+      badgeIds: vProf?.badge_ids || [],
+      joinedOn: vProf?.joined_on || "Aug 2026",
+    };
   },
   applications: async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data, error } = await supabase
-          .from("opportunity_applications")
-          .select("*")
-          .eq("volunteer_id", session.user.id);
-        if (!error && data && data.length > 0) {
-          return data.map((a: any) => ({
-            id: a.id,
-            opportunityId: a.opportunity_id,
-            volunteerId: session.user.id,
-            status: a.status,
-            appliedOn: a.applied_on,
-            completedOn: a.completed_on,
-            pointsAwarded: a.points_awarded,
-          }));
-        }
-      }
-    } catch (e) {}
-    return delay(applications);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.user) return [];
+    const { data, error } = await supabase
+      .from("opportunity_applications")
+      .select("*")
+      .eq("volunteer_id", session.user.id);
+    if (error) {
+      console.error("Error fetching user applications:", error);
+      throw error;
+    }
+    return (data || []).map((a: any) => ({
+      id: a.id,
+      opportunityId: a.opportunity_id,
+      volunteerId: session.user.id,
+      status: a.status,
+      appliedOn: a.applied_on,
+      completedOn: a.completed_on,
+      pointsAwarded: a.points_awarded,
+    }));
   },
   impactHistory: async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data, error } = await supabase
-          .from("opportunity_applications")
-          .select("*, opportunities(*)")
-          .eq("volunteer_id", session.user.id)
-          .eq("status", "Verified");
-        if (!error && data && data.length > 0) {
-          return data.map((a: any) => ({
-            id: a.id,
-            date: a.completed_on || a.applied_on,
-            opportunityTitle: a.opportunities?.title || "Volunteering Action",
-            organizationName: a.opportunities?.organization_name || "Partner Organization",
-            cause: a.opportunities?.cause || "Community",
-            points: a.points_awarded || 50,
-            status: "Verified" as const,
-          }));
-        }
-      }
-    } catch (e) {}
-    return delay(impactHistory);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.user) return [];
+    const { data, error } = await supabase
+      .from("opportunity_applications")
+      .select("*, opportunities(*)")
+      .eq("volunteer_id", session.user.id)
+      .eq("status", "Verified");
+    if (error) {
+      console.error("Error fetching impact history:", error);
+      throw error;
+    }
+    return (data || []).map((a: any) => ({
+      id: a.id,
+      date: a.completed_on || a.applied_on,
+      opportunityTitle: a.opportunities?.title || "Volunteering Action",
+      organizationName: a.opportunities?.organization_name || "Partner Organization",
+      cause: a.opportunities?.cause || "Community",
+      points: a.points_awarded || 50,
+      status: "Verified" as const,
+    }));
   },
   badges: async () => {
-    try {
-      const { data, error } = await supabase.from("badges").select("*");
-      if (!error && data && data.length > 0) {
-        return data.map((b: any) => ({ ...b, earned: true }));
-      }
-    } catch (e) {}
-    return delay(badges);
+    const { data, error } = await supabase.from("badges").select("*");
+    if (error) {
+      console.error("Error fetching badges:", error);
+      throw error;
+    }
+    if (data && data.length > 0) {
+      return data.map((b: any) => ({ ...b, earned: true }));
+    }
+    return badges;
   },
-  ranks: () => delay(ranks),
+  ranks: () => ranks,
   rank: (points: number) => rankFor(points),
   nextRank: (points: number) => nextRankFor(points),
   notifications: async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data, error } = await supabase
-          .from("notifications")
-          .select("*")
-          .eq("user_id", session.user.id);
-        if (!error && data && data.length > 0) {
-          return data;
-        }
-      }
-    } catch (e) {}
-    return delay(notifications);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.user) return [];
+    const { data, error } = await supabase
+      .from("notifications")
+      .select("*")
+      .eq("user_id", session.user.id);
+    if (error) {
+      console.error("Error fetching notifications:", error);
+      throw error;
+    }
+    return data || [];
   },
 };
 
 export const organizationService = {
   list: async () => {
-    try {
-      const { data, error } = await supabase.from("organization_profiles").select("*");
-      if (!error && data && data.length > 0) {
-        return data;
-      }
-    } catch (e) {}
-    return delay(organizations);
+    const { data, error } = await supabase.from("organization_profiles").select("*");
+    if (error) {
+      console.error("Error fetching organizations:", error);
+      throw error;
+    }
+    if (data && data.length > 0) {
+      return data;
+    }
+    return organizations;
   },
-  get: async (id: string) => delay(organizationById(id)),
+  get: async (id: string) => organizationById(id),
   opportunities: async (orgId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("opportunities")
-        .select("*")
-        .eq("organization_id", orgId);
-      if (!error && data && data.length > 0) {
-        return data.map((o: any) => ({
-          ...o,
-          organizationId: o.organization_id,
-          organizationName: o.organization_name,
-          spotsLeft: o.spots_left,
-          spotsTotal: o.spots_total,
-          impactPoints: o.impact_points,
-          matchScore: 85,
-        }));
-      }
-    } catch (e) {}
-    return delay(opportunities.filter((o) => o.organizationId === orgId));
+    const { data, error } = await supabase
+      .from("opportunities")
+      .select("*")
+      .eq("organization_id", orgId);
+    if (error) {
+      console.error("Error fetching org opportunities:", error);
+      throw error;
+    }
+    if (data && data.length > 0) {
+      return data.map((o: any) => ({
+        ...o,
+        organizationId: o.organization_id,
+        organizationName: o.organization_name,
+        spotsLeft: o.spots_left,
+        spotsTotal: o.spots_total,
+        impactPoints: o.impact_points,
+        matchScore: 85,
+      }));
+    }
+    return opportunities.filter((o) => o.organizationId === orgId);
   },
-  professionals: () => delay(professionals),
+  professionals: async () => {
+    const { data, error } = await supabase.from("professionals").select("*");
+    if (error) {
+      console.error("Error fetching professionals:", error);
+      return professionals;
+    }
+    return data && data.length > 0 ? data : professionals;
+  },
 };
 
 export const certificateService = {
   list: async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data, error } = await supabase
-          .from("certificates")
-          .select("*")
-          .eq("recipient_id", session.user.id);
-        if (!error && data && data.length > 0) {
-          return data;
-        }
-      }
-    } catch (e) {}
-    return delay(certificates);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.user) return [];
+    const { data, error } = await supabase
+      .from("certificates")
+      .select("*")
+      .eq("recipient_id", session.user.id);
+    if (error) {
+      console.error("Error fetching certificates:", error);
+      throw error;
+    }
+    return data || [];
   },
-  get: (id: string) => delay(certificates.find((c) => c.id === id)),
+  get: async (id: string) => certificates.find((c) => c.id === id),
 };
 
 export const impactService = {
   history: () => volunteerService.impactHistory(),
   total: async () => {
     const prof = await volunteerService.profile();
-    return prof.impactPoints;
+    return prof?.impactPoints || 0;
   },
 };
 
 export const ratingService = {
-  received: () => delay(ratings),
-  recommendations: () => delay(recommendations),
+  received: async () => ratings,
+  recommendations: async () => recommendations,
   submit: async (payload: unknown) => {
-    try {
-      await supabase.from("organization_ratings").insert([payload as any]);
-    } catch (e) {}
-    return delay({ ok: true, payload });
+    const { data, error } = await supabase.from("organization_ratings").insert([payload as any]);
+    if (error) {
+      console.error("Error submitting rating:", error);
+      throw error;
+    }
+    return { ok: true, data };
   },
 };
 
 export const chainService = {
   list: async () => {
-    try {
-      const { data, error } = await supabase.from("chain_of_kindness").select("*");
-      if (!error && data && data.length > 0) {
-        return data;
-      }
-    } catch (e) {}
-    return delay(chains);
+    const { data, error } = await supabase.from("chain_of_kindness").select("*");
+    if (error) {
+      console.error("Error fetching chain of kindness:", error);
+      throw error;
+    }
+    return data && data.length > 0 ? data : chains;
   },
   nominate: async (payload: unknown) => {
-    try {
-      await supabase.from("chain_of_kindness").insert([payload as any]);
-    } catch (e) {}
-    return delay({ ok: true, payload });
+    const { data, error } = await supabase.from("chain_of_kindness").insert([payload as any]);
+    if (error) {
+      console.error("Error submitting chain nomination:", error);
+      throw error;
+    }
+    return { ok: true, data };
   },
 };
 
 export const paymentService = {
-  records: () => delay(paymentRecords),
+  records: async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.user) return [];
+    const { data, error } = await supabase
+      .from("payment_records")
+      .select("*")
+      .or(`volunteer_id.eq.${session.user.id},organization_id.eq.${session.user.id}`);
+    if (error) {
+      console.error("Error fetching payment records:", error);
+      throw error;
+    }
+    return data || [];
+  },
 };
 
 /**
