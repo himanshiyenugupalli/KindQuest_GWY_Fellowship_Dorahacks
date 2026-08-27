@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { KindQuestLogo } from "@/components/KindQuestLogo";
 import { AppShell } from "@/components/layout/AppShell";
+import { useAuth } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -38,10 +39,26 @@ export const Route = createFileRoute("/volunteer-id")({
 });
 
 function VolunteerIdPage() {
-  const rank = rankFor(demoVolunteer.impactPoints);
-  const next = nextRankFor(demoVolunteer.impactPoints);
+  const { profile, volunteerProfile } = useAuth();
+
+  const name = profile?.full_name || demoVolunteer.name;
+  const volunteerId = volunteerProfile?.volunteer_id || demoVolunteer.volunteerId;
+  const location = profile?.location || demoVolunteer.location;
+  const joinedOn = volunteerProfile?.joined_on || demoVolunteer.joinedOn;
+  const impactPoints = volunteerProfile?.impact_points ?? demoVolunteer.impactPoints;
+  const contributions = volunteerProfile?.contributions ?? demoVolunteer.contributions;
+  const bio = volunteerProfile?.bio || demoVolunteer.bio;
+  const causes = volunteerProfile?.causes?.length ? volunteerProfile.causes : demoVolunteer.causes;
+  const skills = volunteerProfile?.skills?.length ? volunteerProfile.skills : demoVolunteer.skills;
+  const availability = volunteerProfile?.availability?.length
+    ? volunteerProfile.availability
+    : demoVolunteer.availability;
+  const reliability = volunteerProfile?.reliability || demoVolunteer.reliability;
+
+  const rank = rankFor(impactPoints);
+  const next = nextRankFor(impactPoints);
   const progress = next
-    ? ((demoVolunteer.impactPoints - rank.minPoints) / (next.minPoints - rank.minPoints)) * 100
+    ? ((impactPoints - rank.minPoints) / (next.minPoints - rank.minPoints)) * 100
     : 100;
   const earned = badges.filter((b) => b.earned);
 
@@ -56,27 +73,27 @@ function VolunteerIdPage() {
                   <IdCard className="h-4 w-4" aria-hidden="true" />
                   KindQuest Volunteer ID
                 </p>
-                <h2 className="mt-2 truncate text-2xl font-bold">{demoVolunteer.name}</h2>
-                <p className="text-sm text-muted-foreground">{demoVolunteer.volunteerId}</p>
+                <h2 className="mt-2 truncate text-2xl font-bold">{name}</h2>
+                <p className="text-sm text-muted-foreground">{volunteerId}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {demoVolunteer.location} · joined {demoVolunteer.joinedOn}
+                  {location} · joined {joinedOn}
                 </p>
               </div>
               <KindQuestLogo size="md" framed />
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Stat label="Impact Points" value={demoVolunteer.impactPoints.toLocaleString()} />
+              <Stat label="Impact Points" value={impactPoints.toLocaleString()} />
               <Stat label="Rank" value={rank.name} />
-              <Stat label="Contributions" value={String(demoVolunteer.contributions)} />
-              <Stat label="Reliability" value={`${demoVolunteer.reliability.score}/100`} />
+              <Stat label="Contributions" value={String(contributions)} />
+              <Stat label="Reliability" value={`${reliability.score}/100`} />
             </div>
 
             <div className="mt-6">
               <Progress value={progress} aria-label="Progress to next rank" />
               <p className="mt-2 text-sm text-muted-foreground">
                 {next
-                  ? `${next.minPoints - demoVolunteer.impactPoints} points to ${next.name}`
+                  ? `${next.minPoints - impactPoints} points to ${next.name}`
                   : "Highest rank reached"}
               </p>
             </div>
@@ -99,12 +116,12 @@ function VolunteerIdPage() {
 
           <section className="card-surface rounded-2xl p-6">
             <h2 className="text-lg font-semibold">About</h2>
-            <p className="mt-2 text-sm text-muted-foreground">{demoVolunteer.bio}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{bio}</p>
             <Separator className="my-5" />
             <div className="grid gap-5 sm:grid-cols-3">
-              <Group title="Causes" items={demoVolunteer.causes} />
-              <Group title="Skills" items={demoVolunteer.skills} />
-              <Group title="Availability" items={demoVolunteer.availability} />
+              <Group title="Causes" items={causes} />
+              <Group title="Skills" items={skills} />
+              <Group title="Availability" items={availability} />
             </div>
           </section>
 
@@ -117,9 +134,9 @@ function VolunteerIdPage() {
               Built only from organization feedback on completed opportunities.
             </p>
             <div className="mt-5 space-y-4">
-              <Meter label="Effort" value={demoVolunteer.reliability.effort} />
-              <Meter label="Reliability" value={demoVolunteer.reliability.reliability} />
-              <Meter label="Conduct" value={demoVolunteer.reliability.conduct} />
+              <Meter label="Effort" value={reliability.effort} />
+              <Meter label="Reliability" value={reliability.reliability} />
+              <Meter label="Conduct" value={reliability.conduct} />
             </div>
           </section>
 

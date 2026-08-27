@@ -42,6 +42,55 @@ function SignupPage() {
   const { role: initialRole, redirect: targetRedirect } = Route.useSearch();
   const [role, setRole] = useState<string>(initialRole ?? "volunteer");
   const [submitting, setSubmitting] = useState(false);
+  const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
+
+  const handleResendConfirmation = async () => {
+    if (!signedUpEmail) return;
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: signedUpEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+        },
+      });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Verification email resent!");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to resend email");
+    }
+  };
+
+  if (signedUpEmail) {
+    return (
+      <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-4 py-12 text-center">
+        <div className="w-full max-w-md space-y-6 card-surface p-8 rounded-3xl">
+          <Link to="/" aria-label="KindQuest home" className="inline-block">
+            <KindQuestLogo size="md" framed />
+          </Link>
+          <h1 className="text-2xl font-bold">Check your inbox</h1>
+          <p className="text-sm text-muted-foreground">
+            We've sent a verification link to{" "}
+            <span className="font-semibold text-foreground">{signedUpEmail}</span>. Please click the
+            link to verify your email before logging in.
+          </p>
+          <div className="space-y-3 pt-4">
+            <Button variant="outline" className="w-full" onClick={handleResendConfirmation}>
+              Resend verification email
+            </Button>
+            <Button asChild className="w-full">
+              <Link to="/login" search={targetRedirect ? { redirect: targetRedirect } : {}}>
+                Back to Sign In
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
@@ -105,6 +154,7 @@ function SignupPage() {
                   email: emailInput,
                   password: passwordInput,
                   options: {
+                    emailRedirectTo: `${window.location.origin}/login`,
                     data: {
                       full_name: nameInput,
                       role: role,
@@ -148,15 +198,8 @@ function SignupPage() {
                   }
                 }
 
-                toast.success("Account created successfully!");
-
-                const destination = targetRedirect
-                  ? targetRedirect
-                  : role === "organization"
-                    ? "/organization"
-                    : "/onboarding";
-
-                navigate({ to: destination });
+                setSignedUpEmail(emailInput);
+                toast.success("Account created! Please check your email to verify.");
               } catch (err: any) {
                 toast.error(err?.message || "Failed to create account");
                 setSubmitting(false);

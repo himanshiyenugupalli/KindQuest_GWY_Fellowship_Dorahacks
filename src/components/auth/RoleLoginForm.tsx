@@ -18,6 +18,7 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
   const isOrg = role === "organization";
 
   const handleForgotPassword = async () => {
@@ -36,6 +37,30 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
       }
     } catch (err: any) {
       toast.error(err?.message || "Failed to send reset link");
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    const targetEmail = unconfirmedEmail || email;
+    if (!targetEmail) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: targetEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+        },
+      });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Verification email resent! Please check your inbox.");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to resend email");
     }
   };
 
@@ -89,11 +114,30 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                 : "Your next opportunity is waiting."}
             </p>
 
+            {unconfirmedEmail && (
+              <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200">
+                <p className="font-semibold">Email not verified</p>
+                <p className="mt-1 text-xs">
+                  Please verify your email address ({unconfirmedEmail}) before logging in.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-3 w-full border-amber-500/30 text-xs"
+                  onClick={handleResendConfirmation}
+                >
+                  Resend verification email
+                </Button>
+              </div>
+            )}
+
             <form
               className="mt-6 space-y-4"
               onSubmit={async (e) => {
                 e.preventDefault();
                 setSubmitting(true);
+                setUnconfirmedEmail(null);
 
                 try {
                   const { data, error } = await supabase.auth.signInWithPassword({
@@ -102,7 +146,15 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                   });
 
                   if (error) {
-                    toast.error(error.message);
+                    if (
+                      error.message.toLowerCase().includes("email not confirmed") ||
+                      error.message.toLowerCase().includes("unconfirmed")
+                    ) {
+                      setUnconfirmedEmail(email);
+                      toast.error("Please confirm your email before logging in.");
+                    } else {
+                      toast.error(error.message);
+                    }
                     setSubmitting(false);
                     return;
                   }
@@ -169,47 +221,6 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                 {submitting ? "Signing in..." : "Log in"}
               </Button>
             </form>
-
-            <div className="mt-6 rounded-2xl border border-border bg-card p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Quick Test Access (Prototype)
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Fill quick credentials or sign in instantly to test the platform.
-              </p>
-              <div className="mt-3 flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 text-xs"
-                  onClick={() => {
-                    setEmail("volunteer@kindquest.org");
-                    setPassword("kindquest123");
-                    toast.info(
-                      "Test volunteer credentials loaded. Click 'Log in' or create this account on Signup!",
-                    );
-                  }}
-                >
-                  Load Volunteer
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 text-xs"
-                  onClick={() => {
-                    setEmail("org@kindquest.org");
-                    setPassword("kindquest123");
-                    toast.info(
-                      "Test organization credentials loaded. Click 'Log in' or create this account on Signup!",
-                    );
-                  }}
-                >
-                  Load Org
-                </Button>
-              </div>
-            </div>
 
             <p className="mt-6 text-sm text-muted-foreground">
               New to KindQuest?{" "}
