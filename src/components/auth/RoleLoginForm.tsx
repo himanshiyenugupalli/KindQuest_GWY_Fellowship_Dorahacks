@@ -166,6 +166,43 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
               </Button>
             </form>
 
+            <div className="mt-6 rounded-2xl border border-border bg-card p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Quick Test Access (Prototype)
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Fill quick credentials or sign in instantly to test the platform.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs"
+                  onClick={() => {
+                    setEmail("volunteer@kindquest.org");
+                    setPassword("kindquest123");
+                    toast.info("Test volunteer credentials loaded. Click 'Log in' or create this account on Signup!");
+                  }}
+                >
+                  Load Volunteer
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs"
+                  onClick={() => {
+                    setEmail("org@kindquest.org");
+                    setPassword("kindquest123");
+                    toast.info("Test organization credentials loaded. Click 'Log in' or create this account on Signup!");
+                  }}
+                >
+                  Load Org
+                </Button>
+              </div>
+            </div>
+
             <p className="mt-6 text-sm text-muted-foreground">
               New to KindQuest?{" "}
               <Link
