@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 
 export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) {
   const navigate = useNavigate();
+  const search: { redirect?: string } = useSearch({ strict: false });
   const [show, setShow] = useState(false);
   const isOrg = role === "organization";
 
@@ -40,7 +41,7 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
       <div className="flex flex-col px-4 py-8 sm:px-8">
         <div className="flex items-center justify-between">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/login">
+            <Link to="/login" search={search}>
               <ArrowLeft className="mr-1 h-4 w-4" aria-hidden="true" />
               Back
             </Link>
@@ -86,7 +87,9 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                   toast.success(
                     isOrg ? "Logged in as organization" : "Logged in as volunteer",
                   );
-                  navigate({ to: isOrg ? "/organization" : "/discover" });
+
+                  const target = search.redirect ? search.redirect : isOrg ? "/organization" : "/discover";
+                  navigate({ to: target });
                 } catch (err: any) {
                   toast.error(err?.message || "Failed to log in");
                 }
@@ -143,7 +146,13 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
               New to KindQuest?{" "}
               <Link
                 to="/signup"
-                search={isOrg ? { role: "organization" } : {}}
+                search={
+                  search.redirect
+                    ? { redirect: search.redirect, ...(isOrg ? { role: "organization" } : {}) }
+                    : isOrg
+                      ? { role: "organization" }
+                      : {}
+                }
                 className="font-semibold text-primary hover:underline"
               >
                 {isOrg ? "Register your organization" : "Sign up as a volunteer"}

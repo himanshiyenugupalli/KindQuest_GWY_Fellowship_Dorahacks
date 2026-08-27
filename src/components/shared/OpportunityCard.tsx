@@ -14,10 +14,12 @@ export function OpportunityCard({
   opportunity,
   layout = "grid",
   initiallySaved = false,
+  showMatchBadge = true,
 }: {
   opportunity: Opportunity;
   layout?: "grid" | "list";
   initiallySaved?: boolean;
+  showMatchBadge?: boolean;
 }) {
   const [saved, setSaved] = useState(initiallySaved);
   const org = organizationById(opportunity.organizationId);
@@ -52,7 +54,7 @@ export function OpportunityCard({
           </span>
         </div>
 
-        <MatchBadge score={opportunity.matchScore} className="mt-3" />
+        {showMatchBadge ? <MatchBadge score={opportunity.matchScore} className="mt-3" /> : null}
 
         <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">{opportunity.summary}</p>
 

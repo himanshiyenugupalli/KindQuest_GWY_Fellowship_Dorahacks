@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowRight,
   Compass,
@@ -43,6 +43,8 @@ import {
 import { cn } from "@/lib/utils";
 import type { Cause, Opportunity } from "@/types";
 
+import { useAuth } from "@/lib/auth";
+
 export const Route = createFileRoute("/onboarding/game")({
   validateSearch: (search: Record<string, unknown>): { mode?: "deeper" } =>
     search["mode"] === "deeper" ? { mode: "deeper" } : {},
@@ -80,6 +82,15 @@ const deeperPaths: [string, string][] = [
 ];
 
 function AdventureOnboarding() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate({ to: "/login", search: { redirect: "/onboarding/game" } });
+    }
+  }, [user, loading, navigate]);
+
   const { mode } = Route.useSearch();
   const [stage, setStage] = useState<Stage>(mode === "deeper" ? "map" : "intro");
   const [sessionType, setSessionType] = useState<ExplorationSessionType>(mode === "deeper" ? "deeper" : "initial");
@@ -118,8 +129,9 @@ function AdventureOnboarding() {
   const currentDestinations = sessionType === "deeper" ? deeperDestinations : destinations;
   const completed = profile.completedInteractions;
   const completedOnCurrentMap = currentDestinations
-    .filter((d) => completed.includes(d.interactionId))
-    .map((d) => d.id);
+    .filter((d) => completed.includes(d.interactionId) || profile.visitedDestinations.includes(d.id))
+    .map((d) => (completed.includes(d.interactionId) ? d.id : ""))
+    .filter(Boolean);
   const visitedOnCurrentMap = currentDestinations
     .filter((d) => profile.visitedDestinations.includes(d.id))
     .map((d) => d.id);

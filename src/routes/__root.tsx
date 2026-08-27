@@ -92,17 +92,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Find your cause. Find your opportunity. Make an impact.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "/logo.png?v=2" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "/logo.png?v=2" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/logo.png", type: "image/png" },
-      { rel: "icon", href: "/favicon.ico" },
-      { rel: "shortcut icon", href: "/logo.png", type: "image/png" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "icon", href: "/logo.png?v=2", type: "image/png" },
+      { rel: "icon", href: "/favicon.ico?v=2" },
+      { rel: "shortcut icon", href: "/logo.png?v=2", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=2" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -124,6 +126,10 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" type="image/png" href="/logo.png?v=2" />
+        <link rel="icon" href="/favicon.ico?v=2" />
+        <link rel="shortcut icon" type="image/png" href="/logo.png?v=2" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>

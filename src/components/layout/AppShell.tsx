@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Bell,
   ChevronRight,
@@ -9,7 +9,8 @@ import {
   Search,
   UserRound,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { useAuth } from "@/lib/auth";
 
 import { KindQuestLogo } from "@/components/KindQuestLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -73,12 +74,35 @@ export function AppShell({
   role?: "volunteer" | "organization";
   title?: string | undefined;
   subtitle?: string | undefined;
-
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate({
+        to: role === "organization" ? "/login/organization" : "/login/volunteer",
+        search: { redirect: pathname },
+      });
+    }
+  }, [user, loading, role, navigate, pathname]);
+
   const primary = role === "volunteer" ? volunteerPrimaryNav : organizationNav;
   const secondary = role === "volunteer" ? volunteerSecondaryNav : [];
   const unread = notifications.filter((n) => !n.read).length;
+
+  if (loading || !user) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-background">
+        <div className="text-center">
+          <KindQuestLogo size="md" framed className="mx-auto mb-4 animate-pulse" />
+          <p className="text-sm text-muted-foreground">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-background">

@@ -13,10 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 export const Route = createFileRoute("/signup")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { role?: "volunteer" | "organization" | undefined } => ({
+  ): { role?: "volunteer" | "organization" | undefined; redirect?: string } => ({
     role: search["role"] === "organization" ? "organization" : undefined,
+    ...(typeof search["redirect"] === "string" ? { redirect: search["redirect"] } : {}),
   }),
-
 
   head: () => ({
     meta: [
@@ -37,9 +37,8 @@ export const Route = createFileRoute("/signup")({
 
 function SignupPage() {
   const navigate = useNavigate();
-  const { role: initialRole } = Route.useSearch();
+  const { role: initialRole, redirect: targetRedirect } = Route.useSearch();
   const [role, setRole] = useState<string>(initialRole ?? "volunteer");
-
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
@@ -137,7 +136,14 @@ function SignupPage() {
                 }
 
                 toast.success("Account created successfully!");
-                navigate({ to: role === "organization" ? "/organization" : "/onboarding" });
+
+                const destination = targetRedirect
+                  ? targetRedirect
+                  : role === "organization"
+                    ? "/organization"
+                    : "/onboarding";
+
+                navigate({ to: destination });
               } catch (err: any) {
                 toast.error(err?.message || "Failed to create account");
               }
@@ -173,7 +179,11 @@ function SignupPage() {
 
           <p className="mt-6 text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link to="/login" className="font-semibold text-primary hover:underline">
+            <Link
+              to="/login"
+              search={targetRedirect ? { redirect: targetRedirect } : {}}
+              className="font-semibold text-primary hover:underline"
+            >
               Log in
             </Link>
           </p>

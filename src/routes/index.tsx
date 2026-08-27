@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowRight,
   Award,
@@ -22,14 +22,15 @@ import {
 } from "lucide-react";
 
 import { KindQuestLogo } from "@/components/KindQuestLogo";
+import { KindnessGlobe3D } from "@/components/landing/KindnessGlobe3D";
 import { SiteFooter, SiteHeader, TAGLINE } from "@/components/landing/SiteChrome";
-import { MatchReasons } from "@/components/shared/MatchBadge";
 import { OpportunityCard } from "@/components/shared/OpportunityCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { activeOpportunities } from "@/data/opportunities";
 import { badges, demoVolunteer } from "@/data/volunteer";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -59,7 +60,24 @@ const steps = [
 ];
 
 function Landing() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const featured = activeOpportunities.slice(0, 3);
+
+  const handleFindOpportunity = () => {
+    if (user) {
+      navigate({ to: "/onboarding" });
+    } else {
+      navigate({ to: "/login", search: { redirect: "/onboarding" } });
+    }
+  };
+
+  const handleBrowseScroll = () => {
+    const el = document.getElementById("opportunities");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <div className="min-h-dvh bg-background">
@@ -69,10 +87,6 @@ function Landing() {
       <section className="leaf-glow border-b border-border">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:py-20">
           <div>
-            <Badge className="bg-accent text-accent-foreground hover:bg-accent">
-              <Sparkle className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
-              AI-powered volunteering
-            </Badge>
             <h1 className="mt-5 text-4xl font-bold leading-[1.1] sm:text-5xl lg:text-6xl">
               Find your cause.
               <br />
@@ -85,14 +99,12 @@ function Landing() {
               are, and when you're available.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg">
-                <Link to="/onboarding">
-                  Find your opportunity
-                  <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-                </Link>
+              <Button size="lg" onClick={handleFindOpportunity}>
+                Find your opportunity
+                <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to="/browse">Browse opportunities</Link>
+              <Button size="lg" variant="outline" onClick={handleBrowseScroll}>
+                Browse opportunities
               </Button>
             </div>
             <p className="mt-5 text-sm text-muted-foreground">
@@ -100,29 +112,9 @@ function Landing() {
             </p>
           </div>
 
-          {/* Interest -> Match -> Volunteer -> Impact */}
-          <div className="card-surface rounded-3xl p-5 sm:p-7">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              How a KindQuest journey looks
-            </p>
-            <ol className="mt-4 space-y-3">
-              {[
-                { icon: Heart, label: "Interest", body: "“I like teaching kids, free on weekends.”", tone: "bg-coral/25" },
-                { icon: Sparkle, label: "Match", body: "Weekend Reading Mentor · 94% match", tone: "bg-primary-soft" },
-                { icon: Handshake, label: "Volunteer", body: "2 hrs a week, remote, for 8 weeks", tone: "bg-sky/30" },
-                { icon: TrendingUp, label: "Impact", body: "+60 Impact Points · rating · certificate", tone: "bg-sunbeam/40" },
-              ].map((row) => (
-                <li key={row.label} className="flex items-start gap-3 rounded-2xl bg-muted/60 p-3.5">
-                  <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${row.tone}`}>
-                    <row.icon className="h-5 w-5 text-foreground" aria-hidden="true" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold">{row.label}</p>
-                    <p className="text-sm text-muted-foreground">{row.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+          {/* Interactive 3D Kindness Globe */}
+          <div className="flex justify-center lg:justify-end">
+            <KindnessGlobe3D />
           </div>
         </div>
       </section>
@@ -178,26 +170,17 @@ function Landing() {
         </div>
       </Section>
 
-      {/* Personalized opportunities */}
+      {/* Opportunities Showcase (Public Predefined Data) */}
       <Section
         id="opportunities"
         tone="surface"
         title="Opportunities picked for a person, not a crowd"
-        lead="Every recommendation comes with a plain-language reason."
+        lead="Explore open opportunities across education, environment, technology, and more."
       >
         <div className="grid gap-4 lg:grid-cols-3">
           {featured.map((o) => (
-            <OpportunityCard key={o.id} opportunity={o} />
+            <OpportunityCard key={o.id} opportunity={o} showMatchBadge={false} />
           ))}
-        </div>
-        <div className="mt-6 max-w-xl">
-          <MatchReasons
-            reasons={[
-              "Fits your availability",
-              "Matches your interest in education",
-              "Uses your communication skills",
-            ]}
-          />
         </div>
         <Button asChild variant="outline" className="mt-6">
           <Link to="/browse">See all opportunities</Link>
@@ -216,8 +199,8 @@ function Landing() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-accent-foreground">
                   Volunteer ID
                 </p>
-                <h3 className="mt-1 truncate text-xl font-bold">{demoVolunteer.name}</h3>
-                <p className="text-sm text-muted-foreground">{demoVolunteer.volunteerId}</p>
+                <h3 className="mt-1 truncate text-xl font-bold">Sample Volunteer</h3>
+                <p className="text-sm text-muted-foreground">KQ-VOL-84920</p>
               </div>
               <KindQuestLogo size="sm" framed />
             </div>
@@ -347,49 +330,21 @@ function Landing() {
             </div>
           ))}
         </div>
-        <Button asChild className="mt-6">
-          <Link to="/organization">For organizations</Link>
+        <Button
+          className="mt-6"
+          onClick={() => {
+            if (user) {
+              navigate({ to: "/organization" });
+            } else {
+              navigate({ to: "/login/organization", search: { redirect: "/organization" } });
+            }
+          }}
+        >
+          For organizations
         </Button>
       </Section>
 
-      <Section
-        id="returning"
-        title="Already part of KindQuest?"
-        lead="Pick up where you left off."
-      >
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div className="card-surface flex flex-col rounded-3xl p-6 sm:p-8">
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-soft">
-              <Heart className="h-6 w-6 text-accent-foreground" aria-hidden="true" />
-            </span>
-            <h3 className="mt-4 text-xl font-semibold">Volunteer</h3>
-            <p className="mt-2 flex-1 text-sm text-muted-foreground">
-              Continue your impact journey — Volunteer ID, opportunities and impact points.
-            </p>
-            <Button asChild className="mt-6 self-start" size="lg">
-              <Link to="/login/volunteer">
-                Volunteer Login
-                <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-              </Link>
-            </Button>
-          </div>
-          <div className="card-surface flex flex-col rounded-3xl p-6 sm:p-8">
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-sky/40">
-              <Building2 className="h-6 w-6 text-sky-foreground" aria-hidden="true" />
-            </span>
-            <h3 className="mt-4 text-xl font-semibold">Organization</h3>
-            <p className="mt-2 flex-1 text-sm text-muted-foreground">
-              Continue managing your community — opportunities, volunteers, ratings and certificates.
-            </p>
-            <Button asChild variant="outline" className="mt-6 self-start" size="lg">
-              <Link to="/login/organization">
-                Organization Login
-                <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </Section>
+
 
 
       <section id="about" className="border-t border-border bg-surface">
@@ -454,6 +409,17 @@ function StartCard({
   cta: string;
   to: "/onboarding/game" | "/onboarding/ai";
 }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleStart = () => {
+    if (user) {
+      navigate({ to });
+    } else {
+      navigate({ to: "/login", search: { redirect: to } });
+    }
+  };
+
   return (
     <div className="card-surface flex flex-col rounded-3xl p-6 sm:p-8">
       <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-soft">
@@ -462,11 +428,9 @@ function StartCard({
       <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{kicker}</p>
       <h3 className="mt-1 text-xl font-semibold">{title}</h3>
       <p className="mt-2 flex-1 text-sm text-muted-foreground">{body}</p>
-      <Button asChild className="mt-6 self-start">
-        <Link to={to}>
-          {cta}
-          <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-        </Link>
+      <Button size="lg" className="mt-6 self-start" onClick={handleStart}>
+        {cta}
+        <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
       </Button>
     </div>
   );

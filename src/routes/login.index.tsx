@@ -6,6 +6,9 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/login/")({
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
+    ...(typeof search["redirect"] === "string" ? { redirect: search["redirect"] } : {}),
+  }),
   head: () => ({
     meta: [
       { title: "Log in · KindQuest" },
@@ -24,6 +27,8 @@ export const Route = createFileRoute("/login/")({
 });
 
 function LoginChoicePage() {
+  const search = Route.useSearch();
+
   return (
     <div className="leaf-glow flex min-h-dvh flex-col bg-background">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
@@ -47,7 +52,7 @@ function LoginChoicePage() {
               Find opportunities, track your impact and grow your Volunteer ID.
             </p>
             <Button asChild className="mt-6 self-start" size="lg">
-              <Link to="/login/volunteer">
+              <Link to="/login/volunteer" search={search}>
                 Volunteer Login
                 <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
               </Link>
@@ -63,7 +68,7 @@ function LoginChoicePage() {
               Create opportunities, manage volunteers and build community impact.
             </p>
             <Button asChild variant="outline" className="mt-6 self-start" size="lg">
-              <Link to="/login/organization">
+              <Link to="/login/organization" search={search}>
                 Organization Login
                 <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
               </Link>
@@ -73,7 +78,7 @@ function LoginChoicePage() {
 
         <p className="mt-8 text-sm text-muted-foreground">
           New to KindQuest?{" "}
-          <Link to="/signup" className="font-semibold text-primary hover:underline">
+          <Link to="/signup" search={search} className="font-semibold text-primary hover:underline">
             Create an account
           </Link>{" "}
           ·{" "}

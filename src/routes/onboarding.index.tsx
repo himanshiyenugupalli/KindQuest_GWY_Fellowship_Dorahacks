@@ -1,8 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Bot, Gamepad2, SkipForward } from "lucide-react";
+import { useEffect } from "react";
 
 import { KindQuestLogo } from "@/components/KindQuestLogo";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/onboarding/")({
   head: () => ({
@@ -23,6 +25,25 @@ export const Route = createFileRoute("/onboarding/")({
 });
 
 function OnboardingChoice() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate({ to: "/login", search: { redirect: "/onboarding" } });
+    }
+  }, [user, loading, navigate]);
+
+  if (loading || !user) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-surface">
+        <div className="text-center">
+          <KindQuestLogo size="md" framed className="mx-auto mb-4 animate-pulse" />
+          <p className="text-sm text-muted-foreground">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-dvh bg-surface">
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-16">
