@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { activeOpportunities } from "@/data/opportunities";
 import { nextRankFor, rankFor } from "@/data/volunteer";
 import { opportunityService } from "@/services";
 import type { Opportunity } from "@/types";
@@ -52,9 +53,14 @@ function DiscoverPage() {
     async function loadOpps() {
       try {
         const data = await opportunityService.list();
-        if (isMounted) setOppList(data as Opportunity[]);
+        if (isMounted && data && data.length > 0) {
+          setOppList(data as Opportunity[]);
+        } else if (isMounted) {
+          setOppList(activeOpportunities);
+        }
       } catch (err) {
-        console.error("Failed to load opportunities:", err);
+        console.error("Failed to load opportunities from Supabase, using active fallback:", err);
+        if (isMounted) setOppList(activeOpportunities);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -65,11 +71,12 @@ function DiscoverPage() {
     };
   }, []);
 
-  const recommended = [...oppList]
+  const displayList = oppList.length > 0 ? oppList : activeOpportunities;
+  const recommended = [...displayList]
     .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0))
     .slice(0, 6);
-  const nearby = oppList.filter((o) => !o.remote).slice(0, 6);
-  const remote = oppList.filter((o) => o.remote).slice(0, 6);
+  const nearby = displayList.filter((o) => !o.remote).slice(0, 6);
+  const remote = displayList.filter((o) => o.remote).slice(0, 6);
   const rank = rankFor(impactPoints);
   const next = nextRankFor(impactPoints);
   const progress = next
@@ -89,9 +96,11 @@ function DiscoverPage() {
               </Badge>
               <h2 className="mt-3 text-xl font-bold sm:text-2xl">{top.title}</h2>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{top.summary}</p>
-              <div className="mt-4 max-w-md">
-                <MatchReasons reasons={top.matchReasons} />
-              </div>
+              {top.matchReasons && top.matchReasons.length > 0 ? (
+                <div className="mt-4 max-w-md">
+                  <MatchReasons reasons={top.matchReasons} />
+                </div>
+              ) : null}
               <Button asChild className="mt-5">
                 <Link to="/opportunities/$id" params={{ id: top.id }}>
                   View opportunity
