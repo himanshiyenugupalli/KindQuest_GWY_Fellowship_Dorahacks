@@ -48,7 +48,6 @@ export function LoginChoices({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-
 export const TAGLINE = "Find your cause. Find your opportunity. Make an impact.";
 
 const publicNav = [
@@ -95,7 +94,6 @@ export function SiteHeader() {
             <Link to="/signup">Get started</Link>
           </Button>
 
-
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="sm:hidden" aria-label="Open menu">
@@ -133,7 +131,6 @@ export function SiteHeader() {
                   <ThemeToggle />
                 </div>
               </div>
-
             </SheetContent>
           </Sheet>
         </div>

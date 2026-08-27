@@ -15,7 +15,8 @@ export const Route = createFileRoute("/organization/")({
       { title: "Organization dashboard · KindQuest" },
       {
         name: "description",
-        content: "Manage opportunities, volunteers, verification, ratings and certificates in one workspace.",
+        content:
+          "Manage opportunities, volunteers, verification, ratings and certificates in one workspace.",
       },
       { property: "og:title", content: "Organization dashboard · KindQuest" },
       {
@@ -35,7 +36,11 @@ function OrgDashboard() {
   const capacity = mine.reduce((sum, o) => sum + o.capacity, 0) || 1;
 
   return (
-    <AppShell role="organization" title={org?.name ?? "Organization"} subtitle="Your volunteering workspace.">
+    <AppShell
+      role="organization"
+      title={org?.name ?? "Organization"}
+      subtitle="Your volunteering workspace."
+    >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi label="Active opportunities" value={String(active.length)} />
         <Kpi label="Volunteers engaged" value={String(filled)} />
@@ -57,7 +62,10 @@ function OrgDashboard() {
             </div>
             <ul className="mt-4 divide-y divide-border">
               {mine.slice(0, 5).map((o) => (
-                <li key={o.id} className="grid gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                <li
+                  key={o.id}
+                  className="grid gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+                >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{o.title}</p>
                     <p className="text-sm text-muted-foreground">
@@ -74,7 +82,11 @@ function OrgDashboard() {
 
           <section className="card-surface rounded-2xl p-6">
             <h2 className="text-lg font-semibold">Capacity filled</h2>
-            <Progress value={(filled / capacity) * 100} className="mt-4" aria-label="Capacity filled" />
+            <Progress
+              value={(filled / capacity) * 100}
+              className="mt-4"
+              aria-label="Capacity filled"
+            />
             <p className="mt-2 text-sm text-muted-foreground">
               {filled} of {capacity} volunteer spots filled across all opportunities.
             </p>

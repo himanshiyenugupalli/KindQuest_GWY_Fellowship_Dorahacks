@@ -187,12 +187,17 @@
 }
 
 @utility leaf-glow {
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       60% 55% at 12% 8%,
       color-mix(in oklab, var(--primary) 12%, transparent),
       transparent
     ),
-    radial-gradient(50% 50% at 88% 4%, color-mix(in oklab, var(--coral) 14%, transparent), transparent);
+    radial-gradient(
+      50% 50% at 88% 4%,
+      color-mix(in oklab, var(--coral) 14%, transparent),
+      transparent
+    );
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -17,7 +17,8 @@ export const Route = createFileRoute("/organization/volunteers")({
       { title: "Volunteers · KindQuest" },
       {
         name: "description",
-        content: "Review volunteer requests with interests, skills and reliability before accepting.",
+        content:
+          "Review volunteer requests with interests, skills and reliability before accepting.",
       },
       { property: "og:title", content: "Volunteers · KindQuest" },
       { property: "og:description", content: "Decide with context, not guesswork." },
@@ -45,7 +46,10 @@ function OrgVolunteers() {
                   <div className="min-w-0">
                     <p className="flex items-center gap-1.5 font-semibold">
                       <span className="truncate">{demoVolunteer.name}</span>
-                      <BadgeCheck className="h-4 w-4 shrink-0 text-primary" aria-label="Verified volunteer" />
+                      <BadgeCheck
+                        className="h-4 w-4 shrink-0 text-primary"
+                        aria-label="Verified volunteer"
+                      />
                     </p>
                     <p className="truncate text-sm text-muted-foreground">
                       {opportunity?.title} · applied {a.appliedOn}
@@ -104,7 +108,8 @@ function OrgVolunteers() {
                   aria-label="Volunteer reliability"
                 />
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {demoVolunteer.reliability.score} / 100 · {demoVolunteer.contributions} contributions
+                  {demoVolunteer.reliability.score} / 100 · {demoVolunteer.contributions}{" "}
+                  contributions
                 </p>
               </div>
             </li>

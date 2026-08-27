@@ -172,8 +172,7 @@ export const opportunities: Opportunity[] = [
     impactPoints: 100,
     matchScore: 79,
     matchReasons: ["Community-focused work", "Fits a weekend slot"],
-    summary:
-      "Pack and distribute 800 ration kits alongside the community kitchen team.",
+    summary: "Pack and distribute 800 ration kits alongside the community kitchen team.",
     responsibilities: [
       "Pack ration kits on the assembly line",
       "Verify beneficiary tokens at the distribution desk",
@@ -200,8 +199,7 @@ export const opportunities: Opportunity[] = [
     impactPoints: 85,
     matchScore: 68,
     matchReasons: ["Creative community project", "Weekend heavy schedule"],
-    summary:
-      "Help artists and school students paint a 40-foot mural about local water heritage.",
+    summary: "Help artists and school students paint a 40-foot mural about local water heritage.",
     responsibilities: [
       "Prepare wall surfaces and mix paint",
       "Support students working on assigned panels",
@@ -228,8 +226,7 @@ export const opportunities: Opportunity[] = [
     impactPoints: 65,
     matchScore: 72,
     matchReasons: ["Uses your organisation skills", "Fits your weekend availability"],
-    summary:
-      "Register patients, manage queues and guide people to the right consultation room.",
+    summary: "Register patients, manage queues and guide people to the right consultation room.",
     responsibilities: [
       "Enter patient details into the camp tablet",
       "Manage the queue kindly and clearly",
@@ -288,8 +285,7 @@ export const opportunities: Opportunity[] = [
       "Close to your location",
       "Recognises your past reliability",
     ],
-    summary:
-      "Lead a group of 15 first-time volunteers through planting and tagging 200 saplings.",
+    summary: "Lead a group of 15 first-time volunteers through planting and tagging 200 saplings.",
     responsibilities: [
       "Brief your group on planting technique",
       "Track sapling count and geo-tag locations",
@@ -344,8 +340,7 @@ export const opportunities: Opportunity[] = [
     impactPoints: 60,
     matchScore: 64,
     matchReasons: ["Creative contribution", "Weekend slot"],
-    summary:
-      "Photograph rescued animals so their adoption listings actually get noticed.",
+    summary: "Photograph rescued animals so their adoption listings actually get noticed.",
     responsibilities: [
       "Shoot portraits of 20–25 animals",
       "Deliver edited photos within 5 days",
@@ -372,8 +367,7 @@ export const opportunities: Opportunity[] = [
     impactPoints: 70,
     matchScore: 74,
     matchReasons: ["Community-focused work", "Recurring low-hour commitment"],
-    summary:
-      "Spend an unhurried couple of hours each week with an elder who lives alone.",
+    summary: "Spend an unhurried couple of hours each week with an elder who lives alone.",
     responsibilities: [
       "Visit your assigned elder at a fixed weekly time",
       "Share a conversation, walk or a small activity",
@@ -460,8 +454,7 @@ export const opportunities: Opportunity[] = [
       "Fits your weekend availability",
       "Uses your communication skills",
     ],
-    summary:
-      "Run two lively storytelling circles for 40 children at the learning centre.",
+    summary: "Run two lively storytelling circles for 40 children at the learning centre.",
     responsibilities: [
       "Prepare two age-appropriate stories",
       "Lead a short craft activity after each story",
@@ -544,8 +537,7 @@ export const opportunities: Opportunity[] = [
     impactPoints: 60,
     matchScore: 62,
     matchReasons: ["Creative and community focused", "Weekend slot"],
-    summary:
-      "Train as a volunteer guide and lead free heritage walks for school groups.",
+    summary: "Train as a volunteer guide and lead free heritage walks for school groups.",
     responsibilities: [
       "Attend the guide training session",
       "Shadow one walk before leading",
@@ -572,8 +564,7 @@ export const opportunities: Opportunity[] = [
     impactPoints: 80,
     matchScore: 77,
     matchReasons: ["Available remotely", "Training provided for new skills"],
-    summary:
-      "After a short training, hold supportive listening calls for caregivers of elders.",
+    summary: "After a short training, hold supportive listening calls for caregivers of elders.",
     responsibilities: [
       "Complete the 4-hour listening training",
       "Take two scheduled calls per week",
@@ -600,8 +591,7 @@ export const opportunities: Opportunity[] = [
     impactPoints: 70,
     matchScore: 75,
     matchReasons: ["Matches your interest in education", "Uses your mentoring skills"],
-    summary:
-      "Judge 30 student projects and give each team encouraging, specific feedback.",
+    summary: "Judge 30 student projects and give each team encouraging, specific feedback.",
     responsibilities: [
       "Score projects on the provided rubric",
       "Give every team two minutes of verbal feedback",
@@ -644,5 +634,7 @@ export const activeOpportunities = opportunities.filter((o) => o.status === "act
 export const allCauses = Array.from(new Set(opportunities.map((o) => o.cause)));
 export const allSkills = Array.from(new Set(opportunities.flatMap((o) => o.skills))).sort();
 export const allLocations = Array.from(
-  new Set(opportunities.map((o) => (o.remote ? "Remote" : o.location.split(", ").pop() ?? o.location))),
+  new Set(
+    opportunities.map((o) => (o.remote ? "Remote" : (o.location.split(", ").pop() ?? o.location))),
+  ),
 ).sort();

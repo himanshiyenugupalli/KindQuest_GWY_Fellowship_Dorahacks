@@ -24,7 +24,8 @@ export const Route = createFileRoute("/volunteer-id")({
       { title: "Volunteer ID · KindQuest" },
       {
         name: "description",
-        content: "Your persistent volunteering identity: Impact Points, rank, badges and reliability.",
+        content:
+          "Your persistent volunteering identity: Impact Points, rank, badges and reliability.",
       },
       { property: "og:title", content: "Volunteer ID · KindQuest" },
       {
@@ -133,7 +134,9 @@ function VolunteerIdPage() {
                       {t.organizationName} · {t.date}
                     </p>
                   </div>
-                  <span className="shrink-0 self-center text-sm font-bold text-primary">+{t.points}</span>
+                  <span className="shrink-0 self-center text-sm font-bold text-primary">
+                    +{t.points}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -201,7 +204,9 @@ function VolunteerIdPage() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-card/80 p-3">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </p>
       <p className="mt-1 truncate text-sm font-bold">{value}</p>
     </div>
   );

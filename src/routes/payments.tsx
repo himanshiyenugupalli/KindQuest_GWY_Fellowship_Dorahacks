@@ -23,7 +23,10 @@ export const Route = createFileRoute("/payments")({
         content: "Stipends, reimbursements and recorded transfers linked to your volunteering.",
       },
       { property: "og:title", content: "Payment records · KindQuest" },
-      { property: "og:description", content: "A clear record of any money involved in your volunteering." },
+      {
+        property: "og:description",
+        content: "A clear record of any money involved in your volunteering.",
+      },
     ],
   }),
   component: PaymentsPage,

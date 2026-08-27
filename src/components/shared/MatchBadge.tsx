@@ -23,7 +23,13 @@ export function MatchBadge({ score, className }: { score: number; className?: st
   );
 }
 
-export function MatchReasons({ reasons, title = "Why this matches you" }: { reasons: string[]; title?: string }) {
+export function MatchReasons({
+  reasons,
+  title = "Why this matches you",
+}: {
+  reasons: string[];
+  title?: string;
+}) {
   return (
     <div className="rounded-xl bg-muted/70 p-4">
       <p className="text-sm font-semibold">{title}</p>

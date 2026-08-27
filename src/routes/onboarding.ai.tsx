@@ -16,12 +16,14 @@ export const Route = createFileRoute("/onboarding/ai")({
       { title: "Talk to KindQuest · KindQuest" },
       {
         name: "description",
-        content: "Describe your interests, skills and availability in your own words and get matched.",
+        content:
+          "Describe your interests, skills and availability in your own words and get matched.",
       },
       { property: "og:title", content: "Talk to KindQuest · KindQuest" },
       {
         property: "og:description",
-        content: "A short conversation turns what you care about into real volunteering opportunities.",
+        content:
+          "A short conversation turns what you care about into real volunteering opportunities.",
       },
     ],
   }),
@@ -173,7 +175,12 @@ function AiOnboarding() {
                 placeholder="Type your answer…"
                 aria-label="Your message"
               />
-              <Button type="submit" size="icon" disabled={thinking || !input.trim()} aria-label="Send message">
+              <Button
+                type="submit"
+                size="icon"
+                disabled={thinking || !input.trim()}
+                aria-label="Send message"
+              >
                 <Send className="h-4 w-4" aria-hidden="true" />
               </Button>
             </form>

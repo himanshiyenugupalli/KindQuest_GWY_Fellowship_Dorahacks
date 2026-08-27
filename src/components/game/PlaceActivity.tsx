@@ -115,7 +115,10 @@ export function PlaceActivity({
           <p className="mt-1 text-sm text-muted-foreground">{destination.helper}</p>
 
           {/* scene backdrop */}
-          <div className="mt-6 flex items-end justify-center gap-3 text-2xl sm:text-3xl" aria-hidden="true">
+          <div
+            className="mt-6 flex items-end justify-center gap-3 text-2xl sm:text-3xl"
+            aria-hidden="true"
+          >
             {destination.scene.map((s, i) => (
               <span
                 key={`${s}-${i}`}
@@ -136,18 +139,25 @@ export function PlaceActivity({
                   targetRefs.current[i] = node;
                 }}
                 role="img"
-                aria-label={isFilled ? "Filled spot" : `Place ${destination.pieceLabel.toLowerCase()} here`}
+                aria-label={
+                  isFilled ? "Filled spot" : `Place ${destination.pieceLabel.toLowerCase()} here`
+                }
                 className={cn(
                   "relative grid aspect-square place-items-center rounded-2xl border-2 border-dashed text-3xl transition-all duration-300 sm:text-4xl",
                   isFilled
                     ? "border-solid border-primary/60 bg-primary-soft"
                     : "border-border bg-muted/60 hover:border-primary hover:bg-accent/50",
-                  activeDrop === i && !isFilled && "scale-[1.03] border-primary bg-accent/70 shadow-[var(--shadow-lift)]",
+                  activeDrop === i &&
+                    !isFilled &&
+                    "scale-[1.03] border-primary bg-accent/70 shadow-[var(--shadow-lift)]",
                   justFilled === i && "animate-scale-in",
                 )}
               >
                 {activeDrop === i && !isFilled ? (
-                  <span className="absolute inset-x-2 top-2 flex justify-between text-base" aria-hidden="true">
+                  <span
+                    className="absolute inset-x-2 top-2 flex justify-between text-base"
+                    aria-hidden="true"
+                  >
                     <span>✨</span>
                     <span>✨</span>
                   </span>
@@ -196,10 +206,10 @@ export function PlaceActivity({
                 {placed} of {total} placed
               </span>
             ) : null}
-            {done ? (
-              <span className="text-sm font-semibold text-primary">All set ✨</span>
+            {done ? <span className="text-sm font-semibold text-primary">All set ✨</span> : null}
+            {feedback && !done ? (
+              <span className="text-sm text-muted-foreground">{feedback}</span>
             ) : null}
-            {feedback && !done ? <span className="text-sm text-muted-foreground">{feedback}</span> : null}
           </div>
         </div>
       </div>

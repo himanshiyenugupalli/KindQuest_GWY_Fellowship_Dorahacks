@@ -17,7 +17,8 @@ export const Route = createFileRoute("/organization/settings")({
       { title: "Organization settings · KindQuest" },
       {
         name: "description",
-        content: "Update your organization profile, causes, contact details and notification preferences.",
+        content:
+          "Update your organization profile, causes, contact details and notification preferences.",
       },
       { property: "og:title", content: "Organization settings · KindQuest" },
       { property: "og:description", content: "Keep your public profile accurate." },

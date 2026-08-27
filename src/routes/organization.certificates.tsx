@@ -13,7 +13,8 @@ export const Route = createFileRoute("/organization/certificates")({
       { title: "Certificates & recommendations · KindQuest" },
       {
         name: "description",
-        content: "Issue certificates and write recommendations for volunteers who completed your work.",
+        content:
+          "Issue certificates and write recommendations for volunteers who completed your work.",
       },
       { property: "og:title", content: "Certificates & recommendations · KindQuest" },
       { property: "og:description", content: "Recognition volunteers can actually use." },

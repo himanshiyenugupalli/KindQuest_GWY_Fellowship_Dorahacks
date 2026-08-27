@@ -17,7 +17,10 @@ export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
       { title: "Settings · KindQuest" },
-      { name: "description", content: "Update your profile, causes, availability and notification preferences." },
+      {
+        name: "description",
+        content: "Update your profile, causes, availability and notification preferences.",
+      },
       { property: "og:title", content: "Settings · KindQuest" },
       { property: "og:description", content: "Control what KindQuest matches you with." },
     ],
@@ -59,10 +62,7 @@ function SettingsPage() {
           <h2 className="text-lg font-semibold">Causes you care about</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {allCauses.map((c) => (
-              <Badge
-                key={c}
-                variant={demoVolunteer.causes.includes(c) ? "default" : "outline"}
-              >
+              <Badge key={c} variant={demoVolunteer.causes.includes(c) ? "default" : "outline"}>
                 {c}
               </Badge>
             ))}
@@ -115,7 +115,6 @@ function SettingsPage() {
             ))}
           </div>
         </section>
-
       </div>
     </AppShell>
   );

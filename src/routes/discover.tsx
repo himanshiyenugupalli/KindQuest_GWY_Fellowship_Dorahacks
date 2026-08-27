@@ -3,7 +3,11 @@ import { ArrowRight, Compass, Gamepad2, MapPin, Sparkles, TrendingUp, Wifi } fro
 
 import { AppShell } from "@/components/layout/AppShell";
 import { MatchReasons } from "@/components/shared/MatchBadge";
-import { OpportunityGrid, OpportunityRail, SectionHeader } from "@/components/shared/OpportunityCard";
+import {
+  OpportunityGrid,
+  OpportunityRail,
+  SectionHeader,
+} from "@/components/shared/OpportunityCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -16,7 +20,8 @@ export const Route = createFileRoute("/discover")({
       { title: "Discover · KindQuest" },
       {
         name: "description",
-        content: "Personalised volunteering recommendations, nearby tasks and remote work picked for you.",
+        content:
+          "Personalised volunteering recommendations, nearby tasks and remote work picked for you.",
       },
       { property: "og:title", content: "Discover · KindQuest" },
       {
@@ -29,7 +34,9 @@ export const Route = createFileRoute("/discover")({
 });
 
 function DiscoverPage() {
-  const recommended = [...activeOpportunities].sort((a, b) => b.matchScore - a.matchScore).slice(0, 6);
+  const recommended = [...activeOpportunities]
+    .sort((a, b) => b.matchScore - a.matchScore)
+    .slice(0, 6);
   const nearby = activeOpportunities.filter((o) => !o.remote).slice(0, 6);
   const remote = activeOpportunities.filter((o) => o.remote).slice(0, 6);
   const rank = rankFor(demoVolunteer.impactPoints);
@@ -104,7 +111,9 @@ function DiscoverPage() {
             <Progress value={progress} className="mt-4" aria-label="Progress to next rank" />
             <p className="mt-2 text-sm text-muted-foreground">
               {rank.name}
-              {next ? ` · ${next.minPoints - demoVolunteer.impactPoints} pts to ${next.name}` : " · top rank"}
+              {next
+                ? ` · ${next.minPoints - demoVolunteer.impactPoints} pts to ${next.name}`
+                : " · top rank"}
             </p>
             <Button asChild variant="outline" size="sm" className="mt-4 w-full">
               <Link to="/volunteer-id">View Volunteer ID</Link>

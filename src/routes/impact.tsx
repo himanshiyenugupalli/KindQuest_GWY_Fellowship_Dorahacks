@@ -10,9 +10,15 @@ export const Route = createFileRoute("/impact")({
   head: () => ({
     meta: [
       { title: "Impact history · KindQuest" },
-      { name: "description", content: "Every Impact Point you earned, where it came from and why." },
+      {
+        name: "description",
+        content: "Every Impact Point you earned, where it came from and why.",
+      },
       { property: "og:title", content: "Impact history · KindQuest" },
-      { property: "og:description", content: "A transparent ledger of your volunteering contribution." },
+      {
+        property: "og:description",
+        content: "A transparent ledger of your volunteering contribution.",
+      },
     ],
   }),
   component: ImpactPage,
@@ -69,7 +75,11 @@ function ImpactPage() {
                 <span className="font-medium">{cause}</span>
                 <span className="text-muted-foreground">{points} pts</span>
               </div>
-              <Progress value={(points / maxCause) * 100} className="mt-2" aria-label={`${cause} points`} />
+              <Progress
+                value={(points / maxCause) * 100}
+                className="mt-2"
+                aria-label={`${cause} points`}
+              />
             </li>
           ))}
         </ul>
@@ -79,7 +89,10 @@ function ImpactPage() {
         <h2 className="text-lg font-semibold">Impact ledger</h2>
         <ul className="mt-4 divide-y divide-border">
           {impactHistory.map((t) => (
-            <li key={t.id} className="grid gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+            <li
+              key={t.id}
+              className="grid gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+            >
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{t.opportunityTitle}</p>
                 <p className="text-sm text-muted-foreground">

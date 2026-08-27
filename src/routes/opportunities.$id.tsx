@@ -31,7 +31,10 @@ export const Route = createFileRoute("/opportunities/$id")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Opportunity not found · KindQuest" }, { name: "robots", content: "noindex" }],
+        meta: [
+          { title: "Opportunity not found · KindQuest" },
+          { name: "robots", content: "noindex" },
+        ],
       };
     }
     const { opportunity } = loaderData;
@@ -99,7 +102,9 @@ function OpportunityDetail() {
                 <BadgeCheck className="h-4 w-4 text-primary" aria-label="Verified organization" />
               ) : null}
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{opportunity.summary}</p>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              {opportunity.summary}
+            </p>
 
             <Separator className="my-6" />
 
@@ -107,7 +112,11 @@ function OpportunityDetail() {
               <Detail icon={CalendarDays} label="Date" value={opportunity.date} />
               <Detail icon={Clock} label="Time commitment" value={opportunity.commitment} />
               <Detail icon={MapPin} label="Location" value={opportunity.location} />
-              <Detail icon={Users} label="Volunteers" value={`${opportunity.filled} of ${opportunity.capacity} filled`} />
+              <Detail
+                icon={Users}
+                label="Volunteers"
+                value={`${opportunity.filled} of ${opportunity.capacity} filled`}
+              />
             </dl>
           </div>
 
@@ -116,7 +125,10 @@ function OpportunityDetail() {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               {opportunity.responsibilities.map((r) => (
                 <li key={r} className="flex gap-2">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                  <span
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
                   {r}
                 </li>
               ))}
@@ -208,7 +220,9 @@ function Detail({
         <Icon className="h-4 w-4 text-accent-foreground" aria-hidden="true" />
       </span>
       <div className="min-w-0">
-        <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</dt>
+        <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          {label}
+        </dt>
         <dd className="text-sm font-semibold">{value}</dd>
       </div>
     </div>

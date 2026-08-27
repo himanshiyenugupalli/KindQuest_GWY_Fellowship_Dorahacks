@@ -101,7 +101,9 @@ export function GlobalSearch() {
                       key={o.id}
                       type="button"
                       className="block w-full rounded-lg px-2 py-2 text-left text-sm hover:bg-muted"
-                      onMouseDown={() => navigate({ to: "/opportunities/$id", params: { id: o.id } })}
+                      onMouseDown={() =>
+                        navigate({ to: "/opportunities/$id", params: { id: o.id } })
+                      }
                     >
                       <span className="font-medium">{o.title}</span>
                       <span className="block text-xs text-muted-foreground">
@@ -138,7 +140,9 @@ export function GlobalSearch() {
                       key={o.id}
                       type="button"
                       className="block w-full rounded-lg px-2 py-2 text-left text-sm hover:bg-muted"
-                      onMouseDown={() => navigate({ to: "/browse", search: { cause: o.causes[0] ?? "" } })}
+                      onMouseDown={() =>
+                        navigate({ to: "/browse", search: { cause: o.causes[0] ?? "" } })
+                      }
                     >
                       {o.name}
                       <span className="block text-xs text-muted-foreground">{o.location}</span>

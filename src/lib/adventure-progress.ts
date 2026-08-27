@@ -78,7 +78,9 @@ export function uniqueItems<T>(items: readonly T[]) {
 
 export async function loadAdventureSessionAsync(): Promise<AdventureSession> {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (session?.user) {
       const { data, error } = await supabase
         .from("adventure_sessions")
@@ -117,12 +119,18 @@ export function loadAdventureSession(): AdventureSession {
     return {
       ...emptyAdventureSession(),
       ...parsed,
-      visitedDestinations: Array.isArray(parsed.visitedDestinations) ? parsed.visitedDestinations : [],
+      visitedDestinations: Array.isArray(parsed.visitedDestinations)
+        ? parsed.visitedDestinations
+        : [],
       completedInteractions: Array.isArray(parsed.completedInteractions)
         ? parsed.completedInteractions
         : [],
-      discoveredInterests: Array.isArray(parsed.discoveredInterests) ? parsed.discoveredInterests : [],
-      activityPreferences: Array.isArray(parsed.activityPreferences) ? parsed.activityPreferences : [],
+      discoveredInterests: Array.isArray(parsed.discoveredInterests)
+        ? parsed.discoveredInterests
+        : [],
+      activityPreferences: Array.isArray(parsed.activityPreferences)
+        ? parsed.activityPreferences
+        : [],
       discoveredSkills: Array.isArray(parsed.discoveredSkills) ? parsed.discoveredSkills : [],
       volunteeringMode: Array.isArray(parsed.volunteeringMode) ? parsed.volunteeringMode : [],
       availability: Array.isArray(parsed.availability) ? parsed.availability : [],
@@ -136,7 +144,9 @@ export function loadAdventureSession(): AdventureSession {
 export async function saveAdventureSessionAsync(session: AdventureSession): Promise<void> {
   saveAdventureSession(session);
   try {
-    const { data: { session: authSession } } = await supabase.auth.getSession();
+    const {
+      data: { session: authSession },
+    } = await supabase.auth.getSession();
     if (authSession?.user) {
       await supabase.from("adventure_sessions").upsert({
         user_id: authSession.user.id,

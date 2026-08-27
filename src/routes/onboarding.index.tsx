@@ -12,12 +12,14 @@ export const Route = createFileRoute("/onboarding/")({
       { title: "Discover your cause · KindQuest" },
       {
         name: "description",
-        content: "Play a short discovery game or talk to KindQuest — or skip and browse opportunities.",
+        content:
+          "Play a short discovery game or talk to KindQuest — or skip and browse opportunities.",
       },
       { property: "og:title", content: "Discover your cause · KindQuest" },
       {
         property: "og:description",
-        content: "Play a short discovery game or talk to KindQuest — onboarding is always optional.",
+        content:
+          "Play a short discovery game or talk to KindQuest — onboarding is always optional.",
       },
     ],
   }),
@@ -114,7 +116,9 @@ function Card({
       <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-soft">
         <Icon className="h-6 w-6 text-accent-foreground" aria-hidden="true" />
       </span>
-      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{kicker}</p>
+      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {kicker}
+      </p>
       <h2 className="mt-1 text-xl font-semibold">{title}</h2>
       <p className="mt-2 flex-1 text-sm text-muted-foreground">{body}</p>
       <Button asChild className="mt-6 self-start">

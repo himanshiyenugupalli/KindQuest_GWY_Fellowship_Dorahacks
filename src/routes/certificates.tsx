@@ -16,7 +16,10 @@ export const Route = createFileRoute("/certificates")({
         content: "Organization-issued and KindQuest milestone certificates for your volunteering.",
       },
       { property: "og:title", content: "Certificates · KindQuest" },
-      { property: "og:description", content: "Verifiable recognition for work you have completed." },
+      {
+        property: "og:description",
+        content: "Verifiable recognition for work you have completed.",
+      },
     ],
   }),
   component: CertificatesPage,
@@ -60,7 +63,11 @@ function CertificatesPage() {
             </dl>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <Button variant="outline" size="sm" onClick={() => toast.success("Certificate downloaded")}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => toast.success("Certificate downloaded")}
+              >
                 <Download className="mr-2 h-4 w-4" aria-hidden="true" />
                 Download
               </Button>

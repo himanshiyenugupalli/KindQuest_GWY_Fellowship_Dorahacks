@@ -41,7 +41,8 @@ function NavLinks({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
   return (
     <ul className="space-y-1">
       {items.map((item) => {
-        const active = pathname === item.to || (item.to !== "/organization" && pathname.startsWith(item.to));
+        const active =
+          pathname === item.to || (item.to !== "/organization" && pathname.startsWith(item.to));
         return (
           <li key={item.to}>
             <Link
@@ -127,7 +128,9 @@ export function AppShell({
             <p className="text-xs font-semibold text-accent-foreground">
               {role === "volunteer" ? "Viewing as volunteer" : "Viewing as organization"}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">Demo role switching for the prototype.</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Demo role switching for the prototype.
+            </p>
             <Button asChild variant="outline" size="sm" className="mt-3 w-full">
               <Link to={role === "volunteer" ? "/organization" : "/discover"}>
                 Switch to {role === "volunteer" ? "organization" : "volunteer"}
@@ -182,12 +185,24 @@ export function AppShell({
               <div className="lg:hidden" />
 
               <div className="flex items-center gap-1">
-                <Button asChild variant="ghost" size="icon" className="lg:hidden" aria-label="Search">
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  className="lg:hidden"
+                  aria-label="Search"
+                >
                   <Link to="/browse">
                     <Search className="h-5 w-5" />
                   </Link>
                 </Button>
-                <Button asChild variant="ghost" size="icon" className="relative" aria-label="Notifications">
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  className="relative"
+                  aria-label="Notifications"
+                >
                   <Link to="/notifications">
                     <Bell className="h-5 w-5" />
                     {unread > 0 ? (
@@ -300,19 +315,20 @@ function MobileBottomNav() {
                 <SheetTitle>More</SheetTitle>
               </SheetHeader>
               <div className="mt-4 grid grid-cols-2 gap-2">
-                {[...volunteerSecondaryNav, { label: "Chain of Kindness", to: "/chain-of-kindness", icon: UserRound }].map(
-                  (i) => (
-                    <Link
-                      key={i.to}
-                      to={i.to}
-                      onClick={() => setOpen(false)}
-                      className="card-surface flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium"
-                    >
-                      <i.icon className="h-4 w-4 text-primary" aria-hidden="true" />
-                      <span className="truncate">{i.label}</span>
-                    </Link>
-                  ),
-                )}
+                {[
+                  ...volunteerSecondaryNav,
+                  { label: "Chain of Kindness", to: "/chain-of-kindness", icon: UserRound },
+                ].map((i) => (
+                  <Link
+                    key={i.to}
+                    to={i.to}
+                    onClick={() => setOpen(false)}
+                    className="card-surface flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium"
+                  >
+                    <i.icon className="h-4 w-4 text-primary" aria-hidden="true" />
+                    <span className="truncate">{i.label}</span>
+                  </Link>
+                ))}
               </div>
               <Button asChild variant="outline" className="mt-4 w-full">
                 <Link to="/organization" onClick={() => setOpen(false)}>

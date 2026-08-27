@@ -18,7 +18,8 @@ export const Route = createFileRoute("/organization/payments")({
       { title: "Payment records · KindQuest" },
       {
         name: "description",
-        content: "A transparent record of stipends, reimbursements and donations linked to your opportunities.",
+        content:
+          "A transparent record of stipends, reimbursements and donations linked to your opportunities.",
       },
       { property: "og:title", content: "Payment records · KindQuest" },
       { property: "og:description", content: "Money moves stay on the record." },
@@ -31,7 +32,11 @@ function OrgPayments() {
   const total = paymentRecords.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <AppShell role="organization" title="Payment records" subtitle="Transparent, read-only history.">
+    <AppShell
+      role="organization"
+      title="Payment records"
+      subtitle="Transparent, read-only history."
+    >
       <div className="card-surface rounded-2xl p-5">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Total recorded

@@ -10,11 +10,46 @@ interface NodeItem {
 }
 
 const NODES: NodeItem[] = [
-  { id: "env", emoji: "🌱", label: "Environment", angle: 0, distance: 130, color: "oklch(0.7 0.18 145)" },
-  { id: "edu", emoji: "📚", label: "Education", angle: 72, distance: 130, color: "oklch(0.7 0.18 230)" },
-  { id: "anim", emoji: "🐶", label: "Animals", angle: 144, distance: 130, color: "oklch(0.75 0.18 45)" },
-  { id: "comm", emoji: "🤝", label: "Community", angle: 216, distance: 130, color: "oklch(0.8 0.18 85)" },
-  { id: "tech", emoji: "💻", label: "Remote", angle: 288, distance: 130, color: "oklch(0.75 0.18 300)" },
+  {
+    id: "env",
+    emoji: "🌱",
+    label: "Environment",
+    angle: 0,
+    distance: 130,
+    color: "oklch(0.7 0.18 145)",
+  },
+  {
+    id: "edu",
+    emoji: "📚",
+    label: "Education",
+    angle: 72,
+    distance: 130,
+    color: "oklch(0.7 0.18 230)",
+  },
+  {
+    id: "anim",
+    emoji: "🐶",
+    label: "Animals",
+    angle: 144,
+    distance: 130,
+    color: "oklch(0.75 0.18 45)",
+  },
+  {
+    id: "comm",
+    emoji: "🤝",
+    label: "Community",
+    angle: 216,
+    distance: 130,
+    color: "oklch(0.8 0.18 85)",
+  },
+  {
+    id: "tech",
+    emoji: "💻",
+    label: "Remote",
+    angle: 288,
+    distance: 130,
+    color: "oklch(0.75 0.18 300)",
+  },
 ];
 
 export function KindnessGlobe3D() {
@@ -83,7 +118,9 @@ export function KindnessGlobe3D() {
         <div>
           <span className="text-6xl">🌍</span>
           <h3 className="mt-4 text-xl font-bold">One Connected World</h3>
-          <p className="mt-2 text-sm text-muted-foreground">Many ways to help, infinite local & remote impact.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Many ways to help, infinite local & remote impact.
+          </p>
         </div>
       </div>
     );

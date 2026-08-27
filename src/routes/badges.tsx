@@ -10,9 +10,15 @@ export const Route = createFileRoute("/badges")({
   head: () => ({
     meta: [
       { title: "Badges · KindQuest" },
-      { name: "description", content: "Milestones you have earned and the ones still ahead of you." },
+      {
+        name: "description",
+        content: "Milestones you have earned and the ones still ahead of you.",
+      },
       { property: "og:title", content: "Badges · KindQuest" },
-      { property: "og:description", content: "Honest recognition for showing up and finishing what you start." },
+      {
+        property: "og:description",
+        content: "Honest recognition for showing up and finishing what you start.",
+      },
     ],
   }),
   component: BadgesPage,
@@ -38,7 +44,10 @@ function BadgesPage() {
           {earned.map((b) => (
             <article key={b.id} className="card-surface rounded-2xl p-5">
               <span
-                className={cn("grid h-12 w-12 place-items-center rounded-2xl", tones[b.tone] ?? "bg-accent")}
+                className={cn(
+                  "grid h-12 w-12 place-items-center rounded-2xl",
+                  tones[b.tone] ?? "bg-accent",
+                )}
               >
                 <Medal className="h-6 w-6 text-foreground" aria-hidden="true" />
               </span>

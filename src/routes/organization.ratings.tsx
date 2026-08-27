@@ -26,7 +26,8 @@ export const Route = createFileRoute("/organization/ratings")({
       { title: "Ratings · KindQuest" },
       {
         name: "description",
-        content: "Rate effort, reliability and conduct on completed volunteering work, and leave feedback.",
+        content:
+          "Rate effort, reliability and conduct on completed volunteering work, and leave feedback.",
       },
       { property: "og:title", content: "Ratings · KindQuest" },
       { property: "og:description", content: "Feedback on the work, never on the person." },

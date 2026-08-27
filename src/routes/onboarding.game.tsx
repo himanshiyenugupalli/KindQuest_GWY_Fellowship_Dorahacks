@@ -59,7 +59,8 @@ export const Route = createFileRoute("/onboarding/game")({
       { property: "og:title", content: "KindQuest Adventure" },
       {
         property: "og:description",
-        content: "Explore a small map of tiny good deeds and discover the volunteering that fits you.",
+        content:
+          "Explore a small map of tiny good deeds and discover the volunteering that fits you.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -68,7 +69,8 @@ export const Route = createFileRoute("/onboarding/game")({
   component: AdventureOnboarding,
 });
 
-type Stage = "intro" | "map" | "destination" | "reward" | "decision" | "results" | "details" | "matches";
+type Stage =
+  "intro" | "map" | "destination" | "reward" | "decision" | "results" | "details" | "matches";
 
 const availabilityOptions = ["Weekdays", "Weekends", "Evenings", "Flexible"] as const;
 
@@ -93,7 +95,9 @@ function AdventureOnboarding() {
 
   const { mode } = Route.useSearch();
   const [stage, setStage] = useState<Stage>(mode === "deeper" ? "map" : "intro");
-  const [sessionType, setSessionType] = useState<ExplorationSessionType>(mode === "deeper" ? "deeper" : "initial");
+  const [sessionType, setSessionType] = useState<ExplorationSessionType>(
+    mode === "deeper" ? "deeper" : "initial",
+  );
   const [profile, setProfile] = useState<AdventureSession>(() => emptyAdventureSession());
   const [active, setActive] = useState<Destination | null>(null);
   const [unlockedNote, setUnlockedNote] = useState<string | null>(null);
@@ -108,7 +112,8 @@ function AdventureOnboarding() {
       setAvailability(stored.availability);
       const savedMode = stored.volunteeringMode.includes("both")
         ? "both"
-        : stored.volunteeringMode.includes("remote") && stored.volunteeringMode.includes("in-person")
+        : stored.volunteeringMode.includes("remote") &&
+            stored.volunteeringMode.includes("in-person")
           ? "both"
           : stored.volunteeringMode.includes("remote")
             ? "remote"
@@ -129,7 +134,9 @@ function AdventureOnboarding() {
   const currentDestinations = sessionType === "deeper" ? deeperDestinations : destinations;
   const completed = profile.completedInteractions;
   const completedOnCurrentMap = currentDestinations
-    .filter((d) => completed.includes(d.interactionId) || profile.visitedDestinations.includes(d.id))
+    .filter(
+      (d) => completed.includes(d.interactionId) || profile.visitedDestinations.includes(d.id),
+    )
     .map((d) => (completed.includes(d.interactionId) ? d.id : ""))
     .filter(Boolean);
   const visitedOnCurrentMap = currentDestinations
@@ -182,11 +189,16 @@ function AdventureOnboarding() {
     const nextAvailability = uniqueItems([...profile.availability, ...availability]);
     const nextProfile: AdventureSession = {
       ...profile,
-      adventureProgress: alreadyDone ? profile.adventureProgress : profile.adventureProgress + active.reward,
+      adventureProgress: alreadyDone
+        ? profile.adventureProgress
+        : profile.adventureProgress + active.reward,
       visitedDestinations: nextVisited,
       completedInteractions: nextCompleted,
       discoveredInterests: uniqueItems([...profile.discoveredInterests, ...active.causes]),
-      activityPreferences: uniqueItems([...profile.activityPreferences, ...active.activityPreferences]),
+      activityPreferences: uniqueItems([
+        ...profile.activityPreferences,
+        ...active.activityPreferences,
+      ]),
       discoveredSkills: uniqueItems([...profile.discoveredSkills, ...active.skills]),
       volunteeringMode: nextMode,
       availability: nextAvailability,
@@ -216,7 +228,9 @@ function AdventureOnboarding() {
     saveAdventureSession(nextProfile);
     saveAdventureSessionAsync(nextProfile);
     const unlocked = currentDestinations.find(
-      (d) => d.unlockAfter === completedOnCurrentMap.length + 1 && !nextCompleted.includes(d.interactionId),
+      (d) =>
+        d.unlockAfter === completedOnCurrentMap.length + 1 &&
+        !nextCompleted.includes(d.interactionId),
     );
     setUnlockedNote(unlocked ? unlocked.name : null);
     setStage("reward");
@@ -258,7 +272,10 @@ function AdventureOnboarding() {
     [profile, place],
   );
 
-  const enoughExplored = sessionType === "deeper" ? completedOnCurrentMap.length >= 2 : completedOnCurrentMap.length >= MIN_DESTINATIONS;
+  const enoughExplored =
+    sessionType === "deeper"
+      ? completedOnCurrentMap.length >= 2
+      : completedOnCurrentMap.length >= MIN_DESTINATIONS;
   const playerAt = visitedOnCurrentMap.at(-1) ?? "start";
 
   return (
@@ -294,8 +311,8 @@ function AdventureOnboarding() {
               Let's see where your curiosity takes you.
             </p>
             <p className="mt-3 max-w-xl text-muted-foreground">
-              Explore a few places on the map and complete tiny acts of impact. We'll learn what kind of
-              volunteering fits you — it takes about a minute.
+              Explore a few places on the map and complete tiny acts of impact. We'll learn what
+              kind of volunteering fits you — it takes about a minute.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2">
@@ -330,7 +347,9 @@ function AdventureOnboarding() {
             <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold sm:text-3xl">
-                  {sessionType === "deeper" ? "Explore more ways to help" : "Where would you like to explore?"}
+                  {sessionType === "deeper"
+                    ? "Explore more ways to help"
+                    : "Where would you like to explore?"}
                 </h1>
                 <p className="mt-2 text-muted-foreground">
                   {enoughExplored
@@ -442,10 +461,12 @@ function AdventureOnboarding() {
         {stage === "decision" ? (
           <section className="mt-8 animate-fade-in">
             <PathTrail completed={completedOnCurrentMap} items={destinations} />
-            <h1 className="mt-4 text-2xl font-bold sm:text-3xl">Your first KindQuest profile is ready.</h1>
+            <h1 className="mt-4 text-2xl font-bold sm:text-3xl">
+              Your first KindQuest profile is ready.
+            </h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              Start with tailored opportunities now, or keep exploring to sharpen your activity style, skills,
-              and volunteering mode.
+              Start with tailored opportunities now, or keep exploring to sharpen your activity
+              style, skills, and volunteering mode.
             </p>
             <ProfileSnapshot
               causes={causes}
@@ -604,17 +625,23 @@ function AdventureOnboarding() {
               <Sparkles className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
               Adventure complete · {energy} Kindness Energy
             </Badge>
-            <h1 className="mt-4 text-2xl font-bold sm:text-3xl">Opportunities that fit your adventure</h1>
+            <h1 className="mt-4 text-2xl font-bold sm:text-3xl">
+              Opportunities that fit your adventure
+            </h1>
             <p className="mt-2 text-muted-foreground">
               Matched to {causes.join(", ") || "your interests"}
-              {place ? ` · ${place === "remote" ? "Remote" : place === "nearby" ? "Near you" : "Remote and in person"}` : ""}
+              {place
+                ? ` · ${place === "remote" ? "Remote" : place === "nearby" ? "Near you" : "Remote and in person"}`
+                : ""}
               {availability.length ? ` · ${availability.join(", ")}` : ""}
             </p>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {rankedMatches.slice(0, 6).map((match) => (
                 <div key={match.opportunity.id} className="space-y-3">
-                  <OpportunityCard opportunity={{ ...match.opportunity, matchScore: match.score }} />
+                  <OpportunityCard
+                    opportunity={{ ...match.opportunity, matchScore: match.score }}
+                  />
                   <MatchReasons reasons={match.reasons} />
                 </div>
               ))}
@@ -656,7 +683,13 @@ function toStoredModes(
   discovered: VolunteeringMode[] = [],
 ) {
   const selectedModes: VolunteeringMode[] =
-    selected === "nearby" ? ["in-person"] : selected === "remote" ? ["remote"] : selected === "both" ? ["both"] : [];
+    selected === "nearby"
+      ? ["in-person"]
+      : selected === "remote"
+        ? ["remote"]
+        : selected === "both"
+          ? ["both"]
+          : [];
   return uniqueItems([...current, ...discovered, ...selectedModes]);
 }
 
@@ -681,9 +714,10 @@ function rankMatches(
     }
 
     const matchedSkills = opportunity.skills.filter((skill) =>
-      profile.discoveredSkills.some((profileSkill) =>
-        skill.toLowerCase().includes(profileSkill.toLowerCase()) ||
-        profileSkill.toLowerCase().includes(skill.toLowerCase()),
+      profile.discoveredSkills.some(
+        (profileSkill) =>
+          skill.toLowerCase().includes(profileSkill.toLowerCase()) ||
+          profileSkill.toLowerCase().includes(skill.toLowerCase()),
       ),
     );
     if (matchedSkills.length) {
@@ -699,19 +733,31 @@ function rankMatches(
       score += 4;
       reasons.push("Fits your remote-support discoveries.");
     }
-    if (profile.activityPreferences.includes("Teaching") && opportunity.skills.some((skill) => skill.toLowerCase().includes("teach"))) {
+    if (
+      profile.activityPreferences.includes("Teaching") &&
+      opportunity.skills.some((skill) => skill.toLowerCase().includes("teach"))
+    ) {
       score += 5;
       reasons.push("Connects to the teaching path you explored.");
     }
-    if (profile.activityPreferences.includes("Creative") && opportunity.skills.some((skill) => /creativity|painting|editing|storytelling/i.test(skill))) {
+    if (
+      profile.activityPreferences.includes("Creative") &&
+      opportunity.skills.some((skill) => /creativity|painting|editing|storytelling/i.test(skill))
+    ) {
       score += 5;
       reasons.push("Connects to the creative tasks you chose.");
     }
-    if (profile.availability.includes("Weekends") && /sat|sun|weekend/i.test(`${opportunity.date} ${opportunity.schedule}`)) {
+    if (
+      profile.availability.includes("Weekends") &&
+      /sat|sun|weekend/i.test(`${opportunity.date} ${opportunity.schedule}`)
+    ) {
       score += 3;
       reasons.push("Lines up with your weekend availability.");
     }
-    if (profile.availability.includes("Evenings") && /evening|pm|weeknight/i.test(`${opportunity.date} ${opportunity.schedule}`)) {
+    if (
+      profile.availability.includes("Evenings") &&
+      /evening|pm|weeknight/i.test(`${opportunity.date} ${opportunity.schedule}`)
+    ) {
       score += 3;
       reasons.push("Lines up with your evening availability.");
     }
@@ -747,11 +793,16 @@ function ProfileSnapshot({
         <h2 className="text-lg font-semibold">Cumulative KindQuest Profile</h2>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
-        {historyCount} adventure interaction{historyCount === 1 ? "" : "s"} saved and used for matching.
+        {historyCount} adventure interaction{historyCount === 1 ? "" : "s"} saved and used for
+        matching.
       </p>
       <div className="mt-5 grid gap-5 sm:grid-cols-3">
         <ProfileGroup title="Causes" items={causes} empty="Explore a few places" />
-        <ProfileGroup title="Activity style" items={activityPreferences} empty="Still discovering" />
+        <ProfileGroup
+          title="Activity style"
+          items={activityPreferences}
+          empty="Still discovering"
+        />
         <ProfileGroup title="Skills" items={discoveredSkills} empty="Still discovering" />
       </div>
       {mode.length ? (
@@ -767,7 +818,15 @@ function ProfileSnapshot({
   );
 }
 
-function ProfileGroup({ title, items, empty }: { title: string; items: readonly string[]; empty: string }) {
+function ProfileGroup({
+  title,
+  items,
+  empty,
+}: {
+  title: string;
+  items: readonly string[];
+  empty: string;
+}) {
   return (
     <div>
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</p>
@@ -807,7 +866,9 @@ function ChoiceTile({
       onClick={onClick}
       className={cn(
         "h-auto justify-start rounded-2xl p-5 text-left transition-all duration-200",
-        selected ? "border-primary bg-primary-soft" : "bg-card hover:-translate-y-0.5 hover:border-primary",
+        selected
+          ? "border-primary bg-primary-soft"
+          : "bg-card hover:-translate-y-0.5 hover:border-primary",
       )}
     >
       <span className="flex min-w-0 flex-col whitespace-normal">
@@ -834,7 +895,12 @@ function PathTrail({ completed, items }: { completed: string[]; items: Destinati
         return (
           <span key={id} className="flex items-center gap-1.5">
             <span className="text-muted-foreground">→</span>
-            <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold", tintClass[destination.tint])}>
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-1 text-xs font-semibold",
+                tintClass[destination.tint],
+              )}
+            >
               {destination.emoji} {destination.name}
             </span>
           </span>

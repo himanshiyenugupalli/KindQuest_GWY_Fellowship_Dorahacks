@@ -45,7 +45,10 @@ export function OpportunityCard({
             <p className="mt-1 flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
               <span className="truncate">{org?.name}</span>
               {org?.verified ? (
-                <BadgeCheck className="h-4 w-4 shrink-0 text-primary" aria-label="Verified organization" />
+                <BadgeCheck
+                  className="h-4 w-4 shrink-0 text-primary"
+                  aria-label="Verified organization"
+                />
               ) : null}
             </p>
           </div>
@@ -107,8 +110,16 @@ export function OpportunityCard({
           aria-label={saved ? "Remove from saved" : "Save opportunity"}
           className={cn(layout === "list" && "sm:w-full")}
         >
-          <Bookmark className={cn("h-4 w-4", saved && "fill-current text-primary")} aria-hidden="true" />
-          <span className={cn(layout === "grid" && "sr-only sm:not-sr-only sm:hidden", "ml-1 hidden sm:inline")}>
+          <Bookmark
+            className={cn("h-4 w-4", saved && "fill-current text-primary")}
+            aria-hidden="true"
+          />
+          <span
+            className={cn(
+              layout === "grid" && "sr-only sm:not-sr-only sm:hidden",
+              "ml-1 hidden sm:inline",
+            )}
+          >
             {saved ? "Saved" : "Save"}
           </span>
         </Button>

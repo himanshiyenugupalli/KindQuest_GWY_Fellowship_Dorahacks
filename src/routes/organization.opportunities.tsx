@@ -33,9 +33,15 @@ export const Route = createFileRoute("/organization/opportunities")({
   head: () => ({
     meta: [
       { title: "Manage opportunities · KindQuest" },
-      { name: "description", content: "Create, edit and publish volunteering opportunities for your organization." },
+      {
+        name: "description",
+        content: "Create, edit and publish volunteering opportunities for your organization.",
+      },
       { property: "og:title", content: "Manage opportunities · KindQuest" },
-      { property: "og:description", content: "Publish roles with skills, dates, capacity and Impact Points." },
+      {
+        property: "og:description",
+        content: "Publish roles with skills, dates, capacity and Impact Points.",
+      },
     ],
   }),
   component: OrgOpportunities,

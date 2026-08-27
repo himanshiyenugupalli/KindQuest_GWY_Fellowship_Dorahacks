@@ -16,7 +16,8 @@ export const Route = createFileRoute("/help")({
       { title: "Help & FAQ · KindQuest" },
       {
         name: "description",
-        content: "Answers about matching, Impact Points, ratings, certificates and privacy on KindQuest.",
+        content:
+          "Answers about matching, Impact Points, ratings, certificates and privacy on KindQuest.",
       },
       { property: "og:title", content: "Help & FAQ · KindQuest" },
       { property: "og:description", content: "How KindQuest works, in plain language." },

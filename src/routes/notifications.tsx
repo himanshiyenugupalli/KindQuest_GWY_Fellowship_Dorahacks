@@ -13,7 +13,10 @@ export const Route = createFileRoute("/notifications")({
   head: () => ({
     meta: [
       { title: "Notifications · KindQuest" },
-      { name: "description", content: "Updates on your requests, impact, certificates and kindness chains." },
+      {
+        name: "description",
+        content: "Updates on your requests, impact, certificates and kindness chains.",
+      },
       { property: "og:title", content: "Notifications · KindQuest" },
       { property: "og:description", content: "Everything that changed since your last visit." },
     ],
@@ -36,7 +39,11 @@ function NotificationsPage() {
   return (
     <AppShell title="Notifications" subtitle={unread ? `${unread} unread` : "You're all caught up"}>
       {items.length === 0 ? (
-        <EmptyState icon={BellOff} title="Nothing new" description="We'll let you know when something happens." />
+        <EmptyState
+          icon={BellOff}
+          title="Nothing new"
+          description="We'll let you know when something happens."
+        />
       ) : (
         <>
           {unread ? (

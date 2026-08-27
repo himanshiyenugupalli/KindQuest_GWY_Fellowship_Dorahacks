@@ -57,7 +57,9 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
               : "Your Volunteer ID, Impact Points, badges and certificates stay with you."}
           </p>
         </div>
-        <p className="text-sm text-muted-foreground">Empowering communities worldwide through kindness.</p>
+        <p className="text-sm text-muted-foreground">
+          Empowering communities worldwide through kindness.
+        </p>
       </div>
 
       <div className="flex flex-col px-4 py-8 sm:px-8">
@@ -105,11 +107,13 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                     return;
                   }
 
-                  toast.success(
-                    isOrg ? "Logged in as organization" : "Logged in as volunteer",
-                  );
+                  toast.success(isOrg ? "Logged in as organization" : "Logged in as volunteer");
 
-                  const target = search.redirect ? search.redirect : isOrg ? "/organization" : "/discover";
+                  const target = search.redirect
+                    ? search.redirect
+                    : isOrg
+                      ? "/organization"
+                      : "/discover";
                   navigate({ to: target });
                 } catch (err: any) {
                   toast.error(err?.message || "Failed to log in");
@@ -182,7 +186,9 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                   onClick={() => {
                     setEmail("volunteer@kindquest.org");
                     setPassword("kindquest123");
-                    toast.info("Test volunteer credentials loaded. Click 'Log in' or create this account on Signup!");
+                    toast.info(
+                      "Test volunteer credentials loaded. Click 'Log in' or create this account on Signup!",
+                    );
                   }}
                 >
                   Load Volunteer
@@ -195,7 +201,9 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                   onClick={() => {
                     setEmail("org@kindquest.org");
                     setPassword("kindquest123");
-                    toast.info("Test organization credentials loaded. Click 'Log in' or create this account on Signup!");
+                    toast.info(
+                      "Test organization credentials loaded. Click 'Log in' or create this account on Signup!",
+                    );
                   }}
                 >
                   Load Org

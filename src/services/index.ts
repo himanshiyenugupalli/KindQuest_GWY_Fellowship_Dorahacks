@@ -5,11 +5,7 @@
  * No backend is connected. Every function is async so that swapping the
  * body for a real API/database call later requires no component changes.
  */
-import {
-  activeOpportunities,
-  opportunities,
-  opportunityById,
-} from "@/data/opportunities";
+import { activeOpportunities, opportunities, opportunityById } from "@/data/opportunities";
 import { organizationById, organizations } from "@/data/organizations";
 import {
   applications,
@@ -115,7 +111,9 @@ export const opportunityService = {
   },
   saved: async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         const { data, error } = await supabase
           .from("saved_opportunities")
@@ -135,7 +133,9 @@ export const opportunityService = {
 export const volunteerService = {
   profile: async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         const { data: prof } = await supabase
           .from("profiles")
@@ -163,7 +163,12 @@ export const volunteerService = {
             preferredType: (vProf.preferred_type || "Both") as "In-person" | "Remote" | "Both",
             impactPoints: vProf.impact_points || 0,
             rankId: vProf.rank_id || "r1",
-            reliability: vProf.reliability || { score: 100, effort: 100, reliability: 100, conduct: 100 },
+            reliability: vProf.reliability || {
+              score: 100,
+              effort: 100,
+              reliability: 100,
+              conduct: 100,
+            },
             contributions: vProf.contributions || 0,
             badgeIds: vProf.badge_ids || [],
             joinedOn: vProf.joined_on || "Aug 2026",
@@ -175,7 +180,9 @@ export const volunteerService = {
   },
   applications: async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         const { data, error } = await supabase
           .from("opportunity_applications")
@@ -198,7 +205,9 @@ export const volunteerService = {
   },
   impactHistory: async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         const { data, error } = await supabase
           .from("opportunity_applications")
@@ -234,7 +243,9 @@ export const volunteerService = {
   nextRank: (points: number) => nextRankFor(points),
   notifications: async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         const { data, error } = await supabase
           .from("notifications")
@@ -286,7 +297,9 @@ export const organizationService = {
 export const certificateService = {
   list: async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
         const { data, error } = await supabase
           .from("certificates")
@@ -350,7 +363,10 @@ export const paymentService = {
  */
 export interface AiProvider {
   name: string;
-  reply(history: ChatMessage[], input: string): Promise<{ text: string; suggestions: string[]; done: boolean }>;
+  reply(
+    history: ChatMessage[],
+    input: string,
+  ): Promise<{ text: string; suggestions: string[]; done: boolean }>;
   extractInterests(history: ChatMessage[]): Promise<string[]>;
   recommend(interests: string[]): Promise<Opportunity[]>;
 }
@@ -361,29 +377,43 @@ const mockProvider: AiProvider = {
     const turn = history.filter((m) => m.from === "user").length;
     const lower = input.toLowerCase();
     if (turn === 0) {
-      const topic = lower.includes("kid") || lower.includes("teach") || lower.includes("student")
-        ? "education-focused volunteering"
-        : lower.includes("tree") || lower.includes("environment") || lower.includes("clean")
-          ? "environment work"
-          : "community work";
-      return delay({
-        text: `That sounds like a great fit for ${topic}. Would you prefer something nearby or remote?`,
-        suggestions: ["Nearby, please", "Remote works better", "I'm open to both"],
-        done: false,
-      }, 700);
+      const topic =
+        lower.includes("kid") || lower.includes("teach") || lower.includes("student")
+          ? "education-focused volunteering"
+          : lower.includes("tree") || lower.includes("environment") || lower.includes("clean")
+            ? "environment work"
+            : "community work";
+      return delay(
+        {
+          text: `That sounds like a great fit for ${topic}. Would you prefer something nearby or remote?`,
+          suggestions: ["Nearby, please", "Remote works better", "I'm open to both"],
+          done: false,
+        },
+        700,
+      );
     }
     if (turn === 1) {
-      return delay({
-        text: "Good to know. Roughly how much time can you give in a week, and which days work best?",
-        suggestions: ["About 2 hours on weekends", "A few weekday evenings", "Only one-off events"],
-        done: false,
-      }, 700);
+      return delay(
+        {
+          text: "Good to know. Roughly how much time can you give in a week, and which days work best?",
+          suggestions: [
+            "About 2 hours on weekends",
+            "A few weekday evenings",
+            "Only one-off events",
+          ],
+          done: false,
+        },
+        700,
+      );
     }
-    return delay({
-      text: "Thank you — that's enough for me to start. Here are opportunities that fit what you told me.",
-      suggestions: [],
-      done: true,
-    }, 800);
+    return delay(
+      {
+        text: "Thank you — that's enough for me to start. Here are opportunities that fit what you told me.",
+        suggestions: [],
+        done: true,
+      },
+      800,
+    );
   },
   async extractInterests() {
     return delay(["Education", "Environment", "Community"], 400);

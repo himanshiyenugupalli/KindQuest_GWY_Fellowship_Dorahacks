@@ -32,12 +32,14 @@ export const Route = createFileRoute("/browse")({
       { title: "Browse opportunities · KindQuest" },
       {
         name: "description",
-        content: "Search and filter volunteering opportunities by cause, location, skills and format.",
+        content:
+          "Search and filter volunteering opportunities by cause, location, skills and format.",
       },
       { property: "og:title", content: "Browse opportunities · KindQuest" },
       {
         property: "og:description",
-        content: "Every open KindQuest opportunity, filterable by cause, location and availability.",
+        content:
+          "Every open KindQuest opportunity, filterable by cause, location and availability.",
       },
     ],
   }),
@@ -79,7 +81,11 @@ function BrowsePage() {
         if (userCauses.length > 0 || userSkills.length > 0) {
           const matchCause = userCauses.includes(o.cause);
           const matchSkill = o.skills.some((s) =>
-            userSkills.some((us) => s.toLowerCase().includes(us.toLowerCase()) || us.toLowerCase().includes(s.toLowerCase())),
+            userSkills.some(
+              (us) =>
+                s.toLowerCase().includes(us.toLowerCase()) ||
+                us.toLowerCase().includes(s.toLowerCase()),
+            ),
           );
           if (!matchCause && !matchSkill) return false;
         } else {
@@ -211,7 +217,12 @@ function BrowsePage() {
             <div className="flex shrink-0 items-center gap-2">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="lg:hidden" aria-label="Open filters">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="lg:hidden"
+                    aria-label="Open filters"
+                  >
                     <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </SheetTrigger>
@@ -241,7 +252,9 @@ function BrowsePage() {
             <p className="text-sm text-muted-foreground">
               {results.length} opportunit{results.length === 1 ? "y" : "ies"}
             </p>
-            {activeFilters ? <Badge variant="secondary">{activeFilters} filter(s) active</Badge> : null}
+            {activeFilters ? (
+              <Badge variant="secondary">{activeFilters} filter(s) active</Badge>
+            ) : null}
           </div>
 
           <div className="mt-6">

@@ -53,10 +53,22 @@ export const Route = createFileRoute("/")({
 });
 
 const steps = [
-  { n: "01", title: "Discover Yourself", body: "Tell KindQuest what you care about through a quick interactive experience." },
-  { n: "02", title: "Find Your Match", body: "Receive opportunities based on your interests, skills, location and availability." },
+  {
+    n: "01",
+    title: "Discover Yourself",
+    body: "Tell KindQuest what you care about through a quick interactive experience.",
+  },
+  {
+    n: "02",
+    title: "Find Your Match",
+    body: "Receive opportunities based on your interests, skills, location and availability.",
+  },
   { n: "03", title: "Make an Impact", body: "Volunteer in person or remotely." },
-  { n: "04", title: "Build Your Journey", body: "Earn Impact Points, badges, ranks and recognition." },
+  {
+    n: "04",
+    title: "Build Your Journey",
+    body: "Earn Impact Points, badges, ranks and recognition.",
+  },
 ];
 
 function Landing() {
@@ -95,8 +107,8 @@ function Landing() {
               <span className="text-primary">Make an impact.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
-              Find volunteering opportunities that fit what you care about, what you're good at, where you
-              are, and when you're available.
+              Find volunteering opportunities that fit what you care about, what you're good at,
+              where you are, and when you're available.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button size="lg" onClick={handleFindOpportunity}>
@@ -120,7 +132,11 @@ function Landing() {
       </section>
 
       {/* How it works */}
-      <Section id="how-it-works" title="How KindQuest works" lead="Four steps, and you can skip any of them.">
+      <Section
+        id="how-it-works"
+        title="How KindQuest works"
+        lead="Four steps, and you can skip any of them."
+      >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((s) => (
             <div key={s.n} className="card-surface rounded-2xl p-5">
@@ -133,7 +149,11 @@ function Landing() {
       </Section>
 
       {/* Two ways to start */}
-      <Section title="Two ways to start" lead="Play, or just talk. Whichever feels easier today." tone="surface">
+      <Section
+        title="Two ways to start"
+        lead="Play, or just talk. Whichever feels easier today."
+        tone="surface"
+      >
         <div className="grid gap-4 lg:grid-cols-2">
           <StartCard
             icon={Gamepad2}
@@ -155,12 +175,17 @@ function Landing() {
       </Section>
 
       {/* Volunteer anywhere */}
-      <Section title="Volunteer anywhere" lead="Where you live shouldn't decide whether you can help.">
+      <Section
+        title="Volunteer anywhere"
+        lead="Where you live shouldn't decide whether you can help."
+      >
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="card-surface rounded-2xl p-6">
             <MapPin className="h-6 w-6 text-primary" aria-hidden="true" />
             <h3 className="mt-3 text-lg font-semibold">In person</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Make an impact in your local community.</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Make an impact in your local community.
+            </p>
           </div>
           <div className="card-surface rounded-2xl p-6">
             <Wifi className="h-6 w-6 text-primary" aria-hidden="true" />
@@ -223,10 +248,26 @@ function Landing() {
           </div>
           <ul className="space-y-4">
             {[
-              { icon: IdCard, title: "A Volunteer ID that follows you", body: "One identity across every organization you help." },
-              { icon: TrendingUp, title: "Impact Points and ranks", body: "Progress that reflects contribution, not competition." },
-              { icon: Medal, title: "Badges and milestones", body: "Small, honest recognition for showing up." },
-              { icon: ShieldCheck, title: "Reliability from real feedback", body: "Organizations rate completed work." },
+              {
+                icon: IdCard,
+                title: "A Volunteer ID that follows you",
+                body: "One identity across every organization you help.",
+              },
+              {
+                icon: TrendingUp,
+                title: "Impact Points and ranks",
+                body: "Progress that reflects contribution, not competition.",
+              },
+              {
+                icon: Medal,
+                title: "Badges and milestones",
+                body: "Small, honest recognition for showing up.",
+              },
+              {
+                icon: ShieldCheck,
+                title: "Reliability from real feedback",
+                body: "Organizations rate completed work.",
+              },
             ].map((row) => (
               <li key={row.title} className="flex gap-3">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent">
@@ -263,13 +304,20 @@ function Landing() {
             Reliability is a volunteering indicator built from organization feedback on completed
             opportunities. It is never a judgement of a person's character.
           </p>
-          <Progress value={92} className="mt-4" aria-label="Sample reliability score 92 out of 100" />
+          <Progress
+            value={92}
+            className="mt-4"
+            aria-label="Sample reliability score 92 out of 100"
+          />
           <p className="mt-2 text-sm font-semibold">Sample reliability · 92 / 100</p>
         </div>
       </Section>
 
       {/* Certification */}
-      <Section title="Two kinds of certificates" lead="All volunteering earns Impact Points, with or without a certificate.">
+      <Section
+        title="Two kinds of certificates"
+        lead="All volunteering earns Impact Points, with or without a certificate."
+      >
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="card-surface rounded-2xl p-6">
             <Building2 className="h-6 w-6 text-primary" aria-hidden="true" />
@@ -289,7 +337,11 @@ function Landing() {
       </Section>
 
       {/* Chain of kindness */}
-      <Section tone="surface" title="One good action can become many." lead="Pass an act of impact forward by nominating someone else.">
+      <Section
+        tone="surface"
+        title="One good action can become many."
+        lead="Pass an act of impact forward by nominating someone else."
+      >
         <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
           {["You", "Friend", "Volunteer", "Another person", "Community"].map((node, i, arr) => (
             <div key={node} className="flex items-center gap-2 sm:gap-3">
@@ -298,7 +350,10 @@ function Landing() {
                 {node}
               </span>
               {i < arr.length - 1 ? (
-                <ArrowRight className="h-4 w-4 shrink-0 rotate-90 text-muted-foreground sm:rotate-0" aria-hidden="true" />
+                <ArrowRight
+                  className="h-4 w-4 shrink-0 rotate-90 text-muted-foreground sm:rotate-0"
+                  aria-hidden="true"
+                />
               ) : null}
             </div>
           ))}
@@ -316,12 +371,36 @@ function Landing() {
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { icon: Sparkle, title: "Create opportunities", body: "Publish roles with skills, dates and Impact Points." },
-            { icon: Users, title: "Find volunteers", body: "See interests, skills and reliability before accepting." },
-            { icon: BadgeCheck, title: "Verify contributions", body: "Confirm completion and award Impact Points." },
-            { icon: Medal, title: "Rate and recommend", body: "Rate effort, reliability and conduct fairly." },
-            { icon: Award, title: "Issue certificates", body: "Certify the work you want to certify." },
-            { icon: Stethoscope, title: "Professional directory", body: "Find nearby doctors, plumbers, electricians and more." },
+            {
+              icon: Sparkle,
+              title: "Create opportunities",
+              body: "Publish roles with skills, dates and Impact Points.",
+            },
+            {
+              icon: Users,
+              title: "Find volunteers",
+              body: "See interests, skills and reliability before accepting.",
+            },
+            {
+              icon: BadgeCheck,
+              title: "Verify contributions",
+              body: "Confirm completion and award Impact Points.",
+            },
+            {
+              icon: Medal,
+              title: "Rate and recommend",
+              body: "Rate effort, reliability and conduct fairly.",
+            },
+            {
+              icon: Award,
+              title: "Issue certificates",
+              body: "Certify the work you want to certify.",
+            },
+            {
+              icon: Stethoscope,
+              title: "Professional directory",
+              body: "Find nearby doctors, plumbers, electricians and more.",
+            },
           ].map((f) => (
             <div key={f.title} className="card-surface rounded-2xl p-5">
               <f.icon className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -343,9 +422,6 @@ function Landing() {
           For organizations
         </Button>
       </Section>
-
-
-
 
       <section id="about" className="border-t border-border bg-surface">
         <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
@@ -384,7 +460,10 @@ function Section({
   tone?: "base" | "surface";
 }) {
   return (
-    <section id={id} className={tone === "surface" ? "border-y border-border bg-surface" : undefined}>
+    <section
+      id={id}
+      className={tone === "surface" ? "border-y border-border bg-surface" : undefined}
+    >
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:py-18">
         <h2 className="max-w-3xl text-2xl font-bold sm:text-3xl">{title}</h2>
         {lead ? <p className="mt-3 max-w-2xl text-muted-foreground">{lead}</p> : null}
@@ -425,7 +504,9 @@ function StartCard({
       <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-soft">
         <Icon className="h-6 w-6 text-accent-foreground" aria-hidden="true" />
       </span>
-      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{kicker}</p>
+      <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {kicker}
+      </p>
       <h3 className="mt-1 text-xl font-semibold">{title}</h3>
       <p className="mt-2 flex-1 text-sm text-muted-foreground">{body}</p>
       <Button size="lg" className="mt-6 self-start" onClick={handleStart}>
@@ -439,7 +520,9 @@ function StartCard({
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-card/80 p-3">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </p>
       <p className="mt-1 text-sm font-bold">{value}</p>
     </div>
   );

@@ -15,7 +15,8 @@ export const Route = createFileRoute("/organization/directory")({
       { title: "Professional directory · KindQuest" },
       {
         name: "description",
-        content: "Find nearby doctors, plumbers, electricians and other professionals willing to help.",
+        content:
+          "Find nearby doctors, plumbers, electricians and other professionals willing to help.",
       },
       { property: "og:title", content: "Professional directory · KindQuest" },
       { property: "og:description", content: "Skilled help, close by, when a task needs it." },
@@ -70,7 +71,9 @@ function DirectoryPage() {
                   <Badge variant="secondary">{p.location}</Badge>
                   <Badge variant="outline">{p.availability}</Badge>
                 </div>
-                <p className="mt-3 text-sm text-muted-foreground">Rating {p.rating.toFixed(1)} / 5</p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Rating {p.rating.toFixed(1)} / 5
+                </p>
                 <Button asChild variant="outline" size="sm" className="mt-4 w-full">
                   <a href={`tel:${p.contact}`}>
                     <Phone className="mr-2 h-4 w-4" aria-hidden="true" />

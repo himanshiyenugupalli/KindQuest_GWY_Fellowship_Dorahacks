@@ -1,6 +1,7 @@
 # Plan: KindQuest Adventure Functional Upgrade
 
 ## Scope
+
 Update only the existing KindQuest Adventure onboarding game and the small dashboard/profile entry point needed to re-open exploration. Preserve the current app, navigation, AI onboarding, browse flow, branding, theme, and mock data.
 
 ## What will change
@@ -44,6 +45,7 @@ Update only the existing KindQuest Adventure onboarding game and the small dashb
    - Add an “Explore More Ways to Help” action that opens the game directly in deeper exploration mode while retaining previous discoveries.
 
 ## Validation
+
 - Run a targeted TypeScript check.
 - Browser-test desktop drag: target click does nothing, invalid drop returns, valid drop completes.
 - Browser-test a mobile viewport touch drag.

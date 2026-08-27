@@ -102,4 +102,5 @@ export const organizations: Organization[] = [
 ];
 
 export const organizationById = (id: string) => organizations.find((o) => o.id === id);
-export const organizationName = (id: string) => organizationById(id)?.name ?? "Unknown organization";
+export const organizationName = (id: string) =>
+  organizationById(id)?.name ?? "Unknown organization";

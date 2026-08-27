@@ -26,7 +26,8 @@ export const Route = createFileRoute("/chain-of-kindness")({
       { title: "Chain of Kindness · KindQuest" },
       {
         name: "description",
-        content: "Pass an act of impact forward by nominating someone else, and watch the chain grow.",
+        content:
+          "Pass an act of impact forward by nominating someone else, and watch the chain grow.",
       },
       { property: "og:title", content: "Chain of Kindness · KindQuest" },
       { property: "og:description", content: "One good action can become many." },

@@ -23,12 +23,14 @@ export const Route = createFileRoute("/signup")({
       { title: "Create your account · KindQuest" },
       {
         name: "description",
-        content: "Join KindQuest as a volunteer or register your organization in a couple of minutes.",
+        content:
+          "Join KindQuest as a volunteer or register your organization in a couple of minutes.",
       },
       { property: "og:title", content: "Create your account · KindQuest" },
       {
         property: "og:description",
-        content: "Join KindQuest as a volunteer or register your organization in a couple of minutes.",
+        content:
+          "Join KindQuest as a volunteer or register your organization in a couple of minutes.",
       },
     ],
   }),
@@ -55,7 +57,9 @@ function SignupPage() {
             Connect with opportunities that fit your skills, location, and availability.
           </p>
         </div>
-        <p className="text-sm text-muted-foreground">Empowering communities worldwide through kindness.</p>
+        <p className="text-sm text-muted-foreground">
+          Empowering communities worldwide through kindness.
+        </p>
       </div>
 
       <div className="flex items-center justify-center px-4 py-12 sm:px-8">
@@ -160,12 +164,24 @@ function SignupPage() {
             }}
           >
             <div className="space-y-2">
-              <Label htmlFor="name">{role === "organization" ? "Organization name" : "Full name"}</Label>
-              <Input id="name" required placeholder={role === "organization" ? "GreenRoots Collective" : "Jane Doe"} />
+              <Label htmlFor="name">
+                {role === "organization" ? "Organization name" : "Full name"}
+              </Label>
+              <Input
+                id="name"
+                required
+                placeholder={role === "organization" ? "GreenRoots Collective" : "Jane Doe"}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" required placeholder="name@example.com" autoComplete="email" />
+              <Input
+                id="email"
+                type="email"
+                required
+                placeholder="name@example.com"
+                autoComplete="email"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
@@ -179,10 +195,21 @@ function SignupPage() {
             ) : null}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required minLength={6} placeholder="At least 6 characters" autoComplete="new-password" />
+              <Input
+                id="password"
+                type="password"
+                required
+                minLength={6}
+                placeholder="At least 6 characters"
+                autoComplete="new-password"
+              />
             </div>
             <Button type="submit" className="w-full" size="lg" disabled={submitting}>
-              {submitting ? "Creating account..." : role === "organization" ? "Register organization" : "Create account"}
+              {submitting
+                ? "Creating account..."
+                : role === "organization"
+                  ? "Register organization"
+                  : "Create account"}
             </Button>
           </form>
 
