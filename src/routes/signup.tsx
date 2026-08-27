@@ -39,6 +39,7 @@ function SignupPage() {
   const navigate = useNavigate();
   const { role: initialRole, redirect: targetRedirect } = Route.useSearch();
   const [role, setRole] = useState<string>(initialRole ?? "volunteer");
+  const [submitting, setSubmitting] = useState(false);
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
@@ -51,10 +52,10 @@ function SignupPage() {
             Start with what you care about.
           </h2>
           <p className="mt-3 max-w-sm text-muted-foreground">
-            You can skip onboarding entirely and browse opportunities right away.
+            Connect with opportunities that fit your skills, location, and availability.
           </p>
         </div>
-        <p className="text-sm text-muted-foreground">Demo experience — nothing is stored.</p>
+        <p className="text-sm text-muted-foreground">Empowering communities worldwide through kindness.</p>
       </div>
 
       <div className="flex items-center justify-center px-4 py-12 sm:px-8">
@@ -85,8 +86,15 @@ function SignupPage() {
               const nameInput = (form.querySelector("#name") as HTMLInputElement)?.value;
               const emailInput = (form.querySelector("#email") as HTMLInputElement)?.value;
               const locationInput = (form.querySelector("#location") as HTMLInputElement)?.value;
-              const passwordInput = (form.querySelector("#password") as HTMLInputElement)?.value || "kindquest123";
+              const passwordInput = (form.querySelector("#password") as HTMLInputElement)?.value;
               const aboutInput = (form.querySelector("#about") as HTMLTextAreaElement)?.value || "";
+
+              if (!passwordInput || passwordInput.length < 6) {
+                toast.error("Password must be at least 6 characters long.");
+                return;
+              }
+
+              setSubmitting(true);
 
               try {
                 const { data, error } = await supabase.auth.signUp({
@@ -102,6 +110,7 @@ function SignupPage() {
 
                 if (error) {
                   toast.error(error.message);
+                  setSubmitting(false);
                   return;
                 }
 
@@ -146,16 +155,17 @@ function SignupPage() {
                 navigate({ to: destination });
               } catch (err: any) {
                 toast.error(err?.message || "Failed to create account");
+                setSubmitting(false);
               }
             }}
           >
             <div className="space-y-2">
               <Label htmlFor="name">{role === "organization" ? "Organization name" : "Full name"}</Label>
-              <Input id="name" required />
+              <Input id="name" required placeholder={role === "organization" ? "GreenRoots Collective" : "Jane Doe"} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" required />
+              <Input id="email" type="email" required placeholder="name@example.com" autoComplete="email" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
@@ -164,16 +174,15 @@ function SignupPage() {
             {role === "organization" ? (
               <div className="space-y-2">
                 <Label htmlFor="about">What does your organization do?</Label>
-                <Textarea id="about" rows={3} />
+                <Textarea id="about" rows={3} placeholder="Brief description of your mission..." />
               </div>
-            ) : (
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" required />
-              </div>
-            )}
-            <Button type="submit" className="w-full" size="lg">
-              {role === "organization" ? "Register organization" : "Create account"}
+            ) : null}
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" type="password" required minLength={6} placeholder="At least 6 characters" autoComplete="new-password" />
+            </div>
+            <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+              {submitting ? "Creating account..." : role === "organization" ? "Register organization" : "Create account"}
             </Button>
           </form>
 

@@ -15,7 +15,29 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
   const navigate = useNavigate();
   const search: { redirect?: string } = useSearch({ strict: false });
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const isOrg = role === "organization";
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error("Please enter your email address first");
+      return;
+    }
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/login`,
+      });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Password reset link sent to your email!");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to send reset link");
+    }
+  };
 
   return (
     <div className="grid min-h-dvh bg-background lg:grid-cols-2">
@@ -35,7 +57,7 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
               : "Your Volunteer ID, Impact Points, badges and certificates stay with you."}
           </p>
         </div>
-        <p className="text-sm text-muted-foreground">Demo experience — no real account needed.</p>
+        <p className="text-sm text-muted-foreground">Empowering communities worldwide through kindness.</p>
       </div>
 
       <div className="flex flex-col px-4 py-8 sm:px-8">
@@ -69,18 +91,17 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
               className="mt-6 space-y-4"
               onSubmit={async (e) => {
                 e.preventDefault();
-                const form = e.currentTarget;
-                const emailInput = (form.querySelector("#email") as HTMLInputElement)?.value;
-                const passwordInput = (form.querySelector("#password") as HTMLInputElement)?.value;
+                setSubmitting(true);
 
                 try {
                   const { data, error } = await supabase.auth.signInWithPassword({
-                    email: emailInput,
-                    password: passwordInput,
+                    email,
+                    password,
                   });
 
                   if (error) {
                     toast.error(error.message);
+                    setSubmitting(false);
                     return;
                   }
 
@@ -92,6 +113,7 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                   navigate({ to: target });
                 } catch (err: any) {
                   toast.error(err?.message || "Failed to log in");
+                  setSubmitting(false);
                 }
               }}
             >
@@ -101,7 +123,10 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                   id="email"
                   type="email"
                   required
-                  defaultValue={isOrg ? "team@greenroots.org" : "himanshi@example.com"}
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
@@ -111,7 +136,10 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                     id="password"
                     type={show ? "text" : "password"}
                     required
-                    defaultValue="kindquest"
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="pr-10"
                   />
                   <button
@@ -124,21 +152,17 @@ export function RoleLoginForm({ role }: { role: "volunteer" | "organization" }) 
                   </button>
                 </div>
               </div>
-              <div className="flex items-center justify-between gap-3">
-                <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Checkbox id="remember" defaultChecked />
-                  Remember me
-                </label>
+              <div className="flex items-center justify-end">
                 <button
                   type="button"
-                  onClick={() => toast.info("Password reset link sent (demo)")}
+                  onClick={handleForgotPassword}
                   className="text-sm font-medium text-primary hover:underline"
                 >
                   Forgot password?
                 </button>
               </div>
-              <Button type="submit" className="w-full" size="lg">
-                Log in
+              <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                {submitting ? "Signing in..." : "Log in"}
               </Button>
             </form>
 
