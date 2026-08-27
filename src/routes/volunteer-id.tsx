@@ -41,19 +41,22 @@ export const Route = createFileRoute("/volunteer-id")({
 function VolunteerIdPage() {
   const { profile, volunteerProfile } = useAuth();
 
-  const name = profile?.full_name || demoVolunteer.name;
-  const volunteerId = volunteerProfile?.volunteer_id || demoVolunteer.volunteerId;
-  const location = profile?.location || demoVolunteer.location;
-  const joinedOn = volunteerProfile?.joined_on || demoVolunteer.joinedOn;
-  const impactPoints = volunteerProfile?.impact_points ?? demoVolunteer.impactPoints;
-  const contributions = volunteerProfile?.contributions ?? demoVolunteer.contributions;
-  const bio = volunteerProfile?.bio || demoVolunteer.bio;
-  const causes = volunteerProfile?.causes?.length ? volunteerProfile.causes : demoVolunteer.causes;
-  const skills = volunteerProfile?.skills?.length ? volunteerProfile.skills : demoVolunteer.skills;
-  const availability = volunteerProfile?.availability?.length
-    ? volunteerProfile.availability
-    : demoVolunteer.availability;
-  const reliability = volunteerProfile?.reliability || demoVolunteer.reliability;
+  const name = profile?.full_name || "Volunteer";
+  const volunteerId = volunteerProfile?.volunteer_id || "KQ-00000";
+  const location = profile?.location || "Not specified";
+  const joinedOn = volunteerProfile?.joined_on || "Recently";
+  const impactPoints = volunteerProfile?.impact_points ?? 0;
+  const contributions = volunteerProfile?.contributions ?? 0;
+  const bio = volunteerProfile?.bio || "No bio added yet.";
+  const causes = volunteerProfile?.causes || [];
+  const skills = volunteerProfile?.skills || [];
+  const availability = volunteerProfile?.availability || [];
+  const reliability = volunteerProfile?.reliability || {
+    score: 100,
+    effort: 5,
+    reliability: 5,
+    conduct: 5,
+  };
 
   const rank = rankFor(impactPoints);
   const next = nextRankFor(impactPoints);

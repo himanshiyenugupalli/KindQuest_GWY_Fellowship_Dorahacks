@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bookmark, CalendarCheck, ListChecks } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { OpportunityGrid } from "@/components/shared/OpportunityCard";
@@ -7,10 +8,10 @@ import { EmptyState } from "@/components/shared/StateBlocks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { activeOpportunities, opportunityById } from "@/data/opportunities";
+import { opportunityById } from "@/data/opportunities";
 import { organizationName } from "@/data/organizations";
-import { applications, savedOpportunityIds } from "@/data/volunteer";
-import type { Application } from "@/types";
+import { opportunityService, volunteerService } from "@/services";
+import type { Application, Opportunity } from "@/types";
 
 export const Route = createFileRoute("/my-opportunities")({
   head: () => ({
@@ -38,7 +39,33 @@ const groups: { key: string; label: string; statuses: Application["status"][] }[
 ];
 
 function MyOpportunities() {
-  const saved = activeOpportunities.filter((o) => savedOpportunityIds.includes(o.id));
+  const [userApps, setUserApps] = useState<Application[]>([]);
+  const [savedOpps, setSavedOpps] = useState<Opportunity[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadData() {
+      try {
+        const [apps, saved] = await Promise.all([
+          volunteerService.applications(),
+          opportunityService.saved(),
+        ]);
+        if (isMounted) {
+          setUserApps(apps as Application[]);
+          setSavedOpps(saved as Opportunity[]);
+        }
+      } catch (err) {
+        console.error("Error loading user opportunities:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    loadData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <AppShell title="My opportunities" subtitle="Everything you've requested, joined or finished.">
@@ -53,10 +80,14 @@ function MyOpportunities() {
         </TabsList>
 
         {groups.map((g) => {
-          const rows = applications.filter((a) => g.statuses.includes(a.status));
+          const rows = userApps.filter((a) => g.statuses.includes(a.status));
           return (
             <TabsContent key={g.key} value={g.key} className="mt-6">
-              {rows.length ? (
+              {loading ? (
+                <div className="py-12 text-center text-sm text-muted-foreground">
+                  Loading your opportunities...
+                </div>
+              ) : rows.length ? (
                 <ul className="space-y-3">
                   {rows.map((a) => (
                     <ApplicationRow key={a.id} application={a} />
@@ -79,8 +110,12 @@ function MyOpportunities() {
         })}
 
         <TabsContent value="saved" className="mt-6">
-          {saved.length ? (
-            <OpportunityGrid items={saved} />
+          {loading ? (
+            <div className="py-12 text-center text-sm text-muted-foreground">
+              Loading saved opportunities...
+            </div>
+          ) : savedOpps.length ? (
+            <OpportunityGrid items={savedOpps} />
           ) : (
             <EmptyState
               icon={Bookmark}

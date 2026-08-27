@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Compass, Gamepad2, MapPin, Sparkles, TrendingUp, Wifi } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/lib/auth";
@@ -12,8 +13,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { activeOpportunities } from "@/data/opportunities";
-import { demoVolunteer, nextRankFor, rankFor } from "@/data/volunteer";
+import { nextRankFor, rankFor } from "@/data/volunteer";
+import { opportunityService } from "@/services";
+import type { Opportunity } from "@/types";
 
 export const Route = createFileRoute("/discover")({
   head: () => ({
@@ -36,18 +38,38 @@ export const Route = createFileRoute("/discover")({
 
 function DiscoverPage() {
   const { profile, volunteerProfile } = useAuth();
+  const [oppList, setOppList] = useState<Opportunity[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const name = profile?.full_name || demoVolunteer.name;
+  const name = profile?.full_name || "Volunteer";
   const firstName = name.split(" ")[0];
-  const location = profile?.location || demoVolunteer.location;
-  const impactPoints = volunteerProfile?.impact_points ?? demoVolunteer.impactPoints;
-  const causes = volunteerProfile?.causes?.length ? volunteerProfile.causes : demoVolunteer.causes;
+  const location = profile?.location || "Your Area";
+  const impactPoints = volunteerProfile?.impact_points ?? 0;
+  const causes = volunteerProfile?.causes || [];
 
-  const recommended = [...activeOpportunities]
-    .sort((a, b) => b.matchScore - a.matchScore)
+  useEffect(() => {
+    let isMounted = true;
+    async function loadOpps() {
+      try {
+        const data = await opportunityService.list();
+        if (isMounted) setOppList(data as Opportunity[]);
+      } catch (err) {
+        console.error("Failed to load opportunities:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    loadOpps();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const recommended = [...oppList]
+    .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0))
     .slice(0, 6);
-  const nearby = activeOpportunities.filter((o) => !o.remote).slice(0, 6);
-  const remote = activeOpportunities.filter((o) => o.remote).slice(0, 6);
+  const nearby = oppList.filter((o) => !o.remote).slice(0, 6);
+  const remote = oppList.filter((o) => o.remote).slice(0, 6);
   const rank = rankFor(impactPoints);
   const next = nextRankFor(impactPoints);
   const progress = next
