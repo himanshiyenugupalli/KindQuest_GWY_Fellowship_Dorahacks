@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, Plus, Star, Users } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { opportunities } from "@/data/opportunities";
-import { organizations } from "@/data/organizations";
-import { ratings } from "@/data/volunteer";
+import { useAuth } from "@/lib/auth";
+import { opportunityService } from "@/services";
+import type { Opportunity } from "@/types";
 
 export const Route = createFileRoute("/organization/")({
   head: () => ({
@@ -29,23 +30,47 @@ export const Route = createFileRoute("/organization/")({
 });
 
 function OrgDashboard() {
-  const org = organizations[0];
-  const mine = opportunities.filter((o) => o.organizationId === org?.id);
-  const active = mine.filter((o) => o.status === "active");
-  const filled = mine.reduce((sum, o) => sum + o.filled, 0);
-  const capacity = mine.reduce((sum, o) => sum + o.capacity, 0) || 1;
+  const { profile, orgProfile } = useAuth();
+  const [opps, setOpps] = useState<Opportunity[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const orgName = orgProfile?.name || profile?.full_name || "Organization Workspace";
+  const rating = orgProfile?.rating ?? 5.0;
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadData() {
+      try {
+        const list = await opportunityService.list();
+        if (isMounted) {
+          const mine = (list as Opportunity[]).filter(
+            (o) => o.organizationId === orgProfile?.org_id || o.organizationName === orgName,
+          );
+          setOpps(mine);
+        }
+      } catch (err) {
+        console.error("Failed loading organization opportunities:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    loadData();
+    return () => {
+      isMounted = false;
+    };
+  }, [orgProfile, orgName]);
+
+  const active = opps.filter((o) => o.status === "active");
+  const filled = opps.reduce((sum, o) => sum + (o.filled || 0), 0);
+  const capacity = opps.reduce((sum, o) => sum + (o.capacity || 0), 0) || 1;
 
   return (
-    <AppShell
-      role="organization"
-      title={org?.name ?? "Organization"}
-      subtitle="Your volunteering workspace."
-    >
+    <AppShell role="organization" title={orgName} subtitle="Your volunteering workspace.">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi label="Active opportunities" value={String(active.length)} />
         <Kpi label="Volunteers engaged" value={String(filled)} />
-        <Kpi label="Ratings given" value={String(ratings.length)} />
-        <Kpi label="Organization rating" value={`${org?.rating.toFixed(1) ?? "—"} / 5`} />
+        <Kpi label="Total opportunities" value={String(opps.length)} />
+        <Kpi label="Organization rating" value={`${rating.toFixed(1)} / 5`} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
@@ -60,24 +85,32 @@ function OrgDashboard() {
                 </Link>
               </Button>
             </div>
-            <ul className="mt-4 divide-y divide-border">
-              {mine.slice(0, 5).map((o) => (
-                <li
-                  key={o.id}
-                  className="grid gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold">{o.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {o.date} · {o.filled}/{o.capacity} volunteers
-                    </p>
-                  </div>
-                  <Badge variant="secondary" className="shrink-0 justify-self-start">
-                    {o.status}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
+            {loading ? (
+              <div className="py-8 text-center text-sm text-muted-foreground">
+                Loading opportunities...
+              </div>
+            ) : opps.length ? (
+              <ul className="mt-4 divide-y divide-border">
+                {opps.slice(0, 5).map((o) => (
+                  <li
+                    key={o.id}
+                    className="grid gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold">{o.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {o.date || "Active"} · {o.filled}/{o.capacity} volunteers
+                      </p>
+                    </div>
+                    <Badge variant="secondary" className="shrink-0 justify-self-start">
+                      {o.status}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-4 text-sm text-muted-foreground">No opportunities posted yet.</p>
+            )}
           </section>
 
           <section className="card-surface rounded-2xl p-6">
@@ -117,19 +150,6 @@ function OrgDashboard() {
               </Button>
             </div>
           </div>
-
-          {org ? (
-            <div className="card-surface rounded-2xl p-5">
-              <p className="text-sm font-semibold">Causes you work on</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {org.causes.map((c) => (
-                  <Badge key={c} variant="secondary">
-                    {c}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          ) : null}
         </aside>
       </div>
     </AppShell>

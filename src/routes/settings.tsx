@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/layout/AppShell";
@@ -10,8 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { allCauses } from "@/data/opportunities";
-import { demoVolunteer } from "@/data/volunteer";
+import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -22,80 +24,90 @@ export const Route = createFileRoute("/settings")({
         content: "Update your profile, causes, availability and notification preferences.",
       },
       { property: "og:title", content: "Settings · KindQuest" },
-      { property: "og:description", content: "Control what KindQuest matches you with." },
+      { property: "og:description", content: "Control what KindQuest shows you." },
     ],
   }),
   component: SettingsPage,
 });
 
 function SettingsPage() {
+  const { user, profile, volunteerProfile, refreshProfile } = useAuth();
   const { theme, setTheme } = useTheme();
+
+  const [fullName, setFullName] = useState(profile?.full_name || "");
+  const [location, setLocation] = useState(profile?.location || "");
+  const [bio, setBio] = useState(volunteerProfile?.bio || "");
+  const [saving, setSaving] = useState(false);
+
+  const selectedCauses = volunteerProfile?.causes || [];
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setSaving(true);
+    try {
+      const { error: pErr } = await supabase
+        .from("profiles")
+        .update({ full_name: fullName, location })
+        .eq("id", user.id);
+      if (pErr) throw pErr;
+
+      if (profile?.role === "volunteer") {
+        const { error: vErr } = await supabase
+          .from("volunteer_profiles")
+          .update({ bio })
+          .eq("id", user.id);
+        if (vErr) throw vErr;
+      }
+
+      await refreshProfile();
+      toast.success("Profile saved successfully");
+    } catch (err: any) {
+      console.error("Error saving settings:", err);
+      toast.error(err.message || "Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <AppShell title="Settings" subtitle="Tune what KindQuest shows you.">
       <div className="max-w-2xl space-y-6">
         <section className="card-surface rounded-2xl p-6">
           <h2 className="text-lg font-semibold">Profile</h2>
-          <form
-            className="mt-4 space-y-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              toast.success("Profile updated");
-            }}
-          >
+          <form className="mt-4 space-y-4" onSubmit={handleSave}>
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue={demoVolunteer.name} />
+              <Label htmlFor="name">Full Name</Label>
+              <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Input id="location" defaultValue={demoVolunteer.location} />
+              <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="bio">Short bio</Label>
-              <Textarea id="bio" rows={3} defaultValue={demoVolunteer.bio} />
-            </div>
-            <Button type="submit">Save changes</Button>
+            {profile?.role === "volunteer" ? (
+              <div className="space-y-2">
+                <Label htmlFor="bio">Short bio</Label>
+                <Textarea id="bio" rows={3} value={bio} onChange={(e) => setBio(e.target.value)} />
+              </div>
+            ) : null}
+            <Button type="submit" disabled={saving}>
+              {saving ? "Saving..." : "Save changes"}
+            </Button>
           </form>
         </section>
 
-        <section className="card-surface rounded-2xl p-6">
-          <h2 className="text-lg font-semibold">Causes you care about</h2>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {allCauses.map((c) => (
-              <Badge key={c} variant={demoVolunteer.causes.includes(c) ? "default" : "outline"}>
-                {c}
-              </Badge>
-            ))}
-          </div>
-          <Separator className="my-5" />
-          <h3 className="font-semibold">Availability</h3>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {demoVolunteer.availability.map((a) => (
-              <Badge key={a} variant="secondary">
-                {a}
-              </Badge>
-            ))}
-          </div>
-        </section>
-
-        <section className="card-surface rounded-2xl p-6">
-          <h2 className="text-lg font-semibold">Notifications</h2>
-          <div className="mt-4 space-y-4">
-            {[
-              { id: "matches", label: "New matches for me", defaultOn: true },
-              { id: "status", label: "Request status changes", defaultOn: true },
-              { id: "impact", label: "Impact Points and ratings", defaultOn: true },
-              { id: "chain", label: "Chain of Kindness activity", defaultOn: false },
-            ].map((row) => (
-              <div key={row.id} className="flex items-center justify-between gap-4">
-                <Label htmlFor={row.id} className="cursor-pointer">
-                  {row.label}
-                </Label>
-                <Switch id={row.id} defaultChecked={row.defaultOn} />
-              </div>
-            ))}
-          </div>
-        </section>
+        {profile?.role === "volunteer" ? (
+          <section className="card-surface rounded-2xl p-6">
+            <h2 className="text-lg font-semibold">Causes you care about</h2>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {allCauses.map((c) => (
+                <Badge key={c} variant={selectedCauses.includes(c) ? "default" : "outline"}>
+                  {c}
+                </Badge>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="card-surface rounded-2xl p-6">
           <h2 className="text-lg font-semibold">Appearance</h2>
